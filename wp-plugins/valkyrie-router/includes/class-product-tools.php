@@ -166,31 +166,41 @@ class VROUTER_Product_Tools {
 	}
 
 	/**
-	 * All products from product_tabs_full_content.csv. Key = WooCommerce
-	 * product ID (small integers 0-14 are placeholders for not-yet-created
-	 * products - see the bulk creators below).
+	 * All products from product_tabs_full_content.csv. Key = product SLUG
+	 * (not WooCommerce post ID - a numeric post ID from one WordPress
+	 * install has no relationship to post IDs on another, so importing by
+	 * ID risks silently writing one product's COA/info onto a completely
+	 * different, unrelated product on the target site. Slugs are portable).
 	 */
 	public static function get_tab_data(): array {
 		return apply_filters( 'vrouter_product_tab_data', [] );
 	}
 
-	/** Run the import - writes _valkyrie_coa_images and _valkyrie_additional_info into WP post meta for each product. */
+	/** Find a published/draft product's post ID by its slug, or null if none exists. */
+	private static function find_product_id_by_slug( string $slug ): ?int {
+		$posts = get_posts( [
+			'name'        => $slug,
+			'post_type'   => 'product',
+			'post_status' => [ 'publish', 'draft', 'pending', 'private' ],
+			'numberposts' => 1,
+			'fields'      => 'ids',
+		] );
+		return $posts ? (int) $posts[0] : null;
+	}
+
+	/** Run the import - writes _valkyrie_coa_images and _valkyrie_additional_info into WP post meta for each product, matched by slug. */
 	public static function run_tab_import(): array {
 		$results = [];
-		foreach ( self::get_tab_data() as $product_id => $data ) {
-			if ( $product_id < 100 ) {
-				$results[] = [ 'ok' => false, 'msg' => "Skipped placeholder ID {$product_id} ({$data['name']}) — run Bulk Create first, then update IDs." ];
-				continue;
-			}
-			$post = get_post( $product_id );
-			if ( ! $post || $post->post_type !== 'product' ) {
-				$results[] = [ 'ok' => false, 'msg' => "ID {$product_id} ({$data['name']}) — not found, skipped." ];
+		foreach ( self::get_tab_data() as $slug => $data ) {
+			$product_id = self::find_product_id_by_slug( $slug );
+			if ( ! $product_id ) {
+				$results[] = [ 'ok' => false, 'msg' => "Slug '{$slug}' ({$data['name']}) — product not found, skipped. Run the matching Bulk Create tool first if this is a new product." ];
 				continue;
 			}
 			update_post_meta( $product_id, '_valkyrie_coa_images', wp_json_encode( $data['coa'] ) );
 			update_post_meta( $product_id, '_valkyrie_additional_info', $data['info'] );
 			$n         = count( $data['coa'] );
-			$results[] = [ 'ok' => true, 'msg' => "ID {$product_id} ({$data['name']}) — {$n} COA image(s) + additional info saved." ];
+			$results[] = [ 'ok' => true, 'msg' => "ID {$product_id} ({$data['name']}, slug '{$slug}') — {$n} COA image(s) + additional info saved." ];
 		}
 		return $results;
 	}
@@ -237,19 +247,7 @@ class VROUTER_Product_Tools {
 		$results = [];
 
 		foreach ( $products as $slug => $data ) {
-			$existing_id = wc_get_product_id_by_sku( $data['sku'] );
-			if ( ! $existing_id ) {
-				$existing_posts = get_posts( [
-					'name'        => $slug,
-					'post_type'   => 'product',
-					'post_status' => [ 'publish', 'draft', 'pending', 'private' ],
-					'numberposts' => 1,
-					'fields'      => 'ids',
-				] );
-				if ( ! empty( $existing_posts ) ) {
-					$existing_id = $existing_posts[0];
-				}
-			}
+			$existing_id = wc_get_product_id_by_sku( $data['sku'] ) ?: self::find_product_id_by_slug( $slug );
 			if ( $existing_id ) {
 				$results[] = [ 'ok' => false, 'msg' => "ID {$existing_id} ({$data['name']}) — already exists, skipped." ];
 				continue;
