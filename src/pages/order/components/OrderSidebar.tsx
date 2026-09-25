@@ -1,6 +1,8 @@
 import { SHIPPING_RATE } from "@/pages/order/orderData";
 import type { CartItem, AppliedCoupon } from "@/hooks/useCart";
 import FreeShippingBar from "@/components/feature/FreeShippingBar";
+import { useCountdown } from "@/hooks/useCountdown";
+import { BOGO_END, BOGO_COUPON_CODE, BOGO_QUALIFY_QTY } from "@/lib/bogo";
 
 interface OrderSidebarProps {
   items: CartItem[];
@@ -27,6 +29,10 @@ export default function OrderSidebar({
   handleApplyCoupon, handleRemoveCoupon,
   taxRate, taxAmount, grandTotal, stateInput,
 }: OrderSidebarProps) {
+  const bogoCountdown = useCountdown(BOGO_END);
+  const totalItems = items.reduce((sum, i) => sum + i.quantity, 0);
+  const bogoQualified = !bogoCountdown.expired && totalItems >= BOGO_QUALIFY_QTY && !appliedCoupon;
+
   return (
     <div className="sticky top-24 flex flex-col gap-4">
 
@@ -34,6 +40,19 @@ export default function OrderSidebar({
       <div className="p-5" style={{ background: "#fff", border: "1px solid #e0e0e0" }}>
         <FreeShippingBar subtotal={subtotal} />
       </div>
+
+      {/* BOGO reminder — shows when cart qualifies but coupon not yet applied */}
+      {bogoQualified && (
+        <div className="px-5 py-4 flex items-start gap-3" style={{ background: "#f0fdf4", border: "1px solid #bbf7d0" }}>
+          <i className="ri-gift-line text-green-600 text-base flex-shrink-0 mt-0.5"></i>
+          <div>
+            <p className="text-green-700 font-black text-[10px] uppercase tracking-wide mb-1">Buy 2 Get 1 Free Active!</p>
+            <p className="text-green-600 text-[11px] leading-snug">
+              Apply code <strong>{BOGO_COUPON_CODE}</strong> in the coupon field below to get your free bottle.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Coupon input */}
       <div style={{ background: "#fff", border: "1px solid #e0e0e0" }}>
