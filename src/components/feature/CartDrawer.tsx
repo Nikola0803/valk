@@ -4,6 +4,8 @@ import { useCart } from "@/hooks/useCart";
 import { useProducts } from "@/hooks/useProducts";
 import { validateCoupon } from "@/lib/woocommerce";
 import { trackViewCart } from "@/lib/analytics";
+import { useCountdown } from "@/hooks/useCountdown";
+import { BOGO_END, BOGO_COUPON_CODE, BOGO_QUALIFY_QTY } from "@/lib/bogo";
 import FreeShippingBar from "@/components/feature/FreeShippingBar";
 import CartUpsellRail from "@/components/feature/CartUpsellRail";
 
@@ -19,6 +21,8 @@ export default function CartDrawer() {
   const { products } = useProducts();
   const bacWaterProduct = products.find((p) => p.slug === BAC_WATER_SLUG);
   const hasBacWater = items.some((i) => i.slug === BAC_WATER_SLUG);
+
+  const bogoCountdown = useCountdown(BOGO_END);
 
   const [couponCode, setCouponCode]     = useState("");
   const [couponStatus, setCouponStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -141,6 +145,33 @@ export default function CartDrawer() {
         {totalItems > 0 && (
           <div className="px-7 py-4 flex-shrink-0" style={{ borderBottom: "1px solid #e8e8e8" }}>
             <FreeShippingBar subtotal={subtotal} />
+          </div>
+        )}
+
+        {/* BOGO nudge — shown when the deal is live */}
+        {totalItems > 0 && !bogoCountdown.expired && (
+          <div
+            className="px-7 py-3 flex-shrink-0 flex items-center gap-3"
+            style={{
+              borderBottom: "1px solid #e8e8e8",
+              background: totalItems >= BOGO_QUALIFY_QTY ? "#f0fdf4" : "#fff7ed",
+            }}
+          >
+            <i className={`ri-gift-line text-base flex-shrink-0 ${totalItems >= BOGO_QUALIFY_QTY ? "text-green-600" : "text-orange-500"}`}></i>
+            {totalItems >= BOGO_QUALIFY_QTY ? (
+              <p className="text-green-700 font-bold text-[10px] leading-snug">
+                Buy 2 Get 1 Free — apply code{" "}
+                <span className="font-black">{BOGO_COUPON_CODE}</span> at checkout
+              </p>
+            ) : totalItems === BOGO_QUALIFY_QTY - 1 ? (
+              <p className="text-orange-700 font-bold text-[10px] leading-snug">
+                Add <span className="font-black">1 more item</span> to unlock Buy 2 Get 1 Free!
+              </p>
+            ) : (
+              <p className="text-orange-700 font-bold text-[10px] leading-snug">
+                Buy 2, Get 1 Free on all peptides
+              </p>
+            )}
           </div>
         )}
 

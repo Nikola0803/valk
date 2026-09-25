@@ -5,11 +5,15 @@ import FooterSection from "@/pages/home/components/FooterSection";
 import FreeShippingBar from "@/components/feature/FreeShippingBar";
 import CartUpsellRail from "@/components/feature/CartUpsellRail";
 import { useCart } from "@/hooks/useCart";
+import { useCountdown } from "@/hooks/useCountdown";
+import { BOGO_END, BOGO_COUPON_CODE, BOGO_QUALIFY_QTY } from "@/lib/bogo";
 
 export default function CartPage() {
   useEffect(() => { window.scrollTo(0, 0); }, []);
   const navigate = useNavigate();
   const { items, removeItem, updateQty, subtotal, discountAmount, totalPrice, appliedCoupon } = useCart();
+  const bogoCountdown = useCountdown(BOGO_END);
+  const totalItems = items.reduce((sum, i) => sum + i.quantity, 0);
 
   return (
     <div className="min-h-screen bg-white">
@@ -37,9 +41,44 @@ export default function CartPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
             {/* Line items */}
             <div className="lg:col-span-2">
-              <div className="mb-6 p-5" style={{ background: "#fafafa", border: "1px solid #e8e8e8" }}>
+              <div className="mb-4 p-5" style={{ background: "#fafafa", border: "1px solid #e8e8e8" }}>
                 <FreeShippingBar subtotal={subtotal} />
               </div>
+
+              {/* BOGO nudge */}
+              {!bogoCountdown.expired && (
+                <div
+                  className="mb-6 px-5 py-4 flex items-center gap-3"
+                  style={{
+                    border: `1px solid ${totalItems >= BOGO_QUALIFY_QTY ? "#bbf7d0" : "#fed7aa"}`,
+                    background: totalItems >= BOGO_QUALIFY_QTY ? "#f0fdf4" : "#fff7ed",
+                  }}
+                >
+                  <i className={`ri-gift-line text-lg flex-shrink-0 ${totalItems >= BOGO_QUALIFY_QTY ? "text-green-600" : "text-orange-500"}`}></i>
+                  {totalItems >= BOGO_QUALIFY_QTY ? (
+                    <div>
+                      <p className="text-green-700 font-black text-xs uppercase tracking-wide mb-0.5">Buy 2 Get 1 Free — You Qualify!</p>
+                      <p className="text-green-600 text-[11px] leading-snug">
+                        Apply code <strong>{BOGO_COUPON_CODE}</strong> at checkout to get your free bottle.
+                      </p>
+                    </div>
+                  ) : totalItems === BOGO_QUALIFY_QTY - 1 ? (
+                    <div>
+                      <p className="text-orange-700 font-black text-xs uppercase tracking-wide mb-0.5">Almost There!</p>
+                      <p className="text-orange-600 text-[11px] leading-snug">
+                        Add <strong>1 more item</strong> to unlock Buy 2 Get 1 Free.
+                      </p>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-orange-700 font-black text-xs uppercase tracking-wide mb-0.5">Buy 2, Get 1 Free</p>
+                      <p className="text-orange-600 text-[11px] leading-snug">
+                        Add any 3 peptides to your cart — pay for only 2.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div style={{ borderTop: "1px solid #ebebeb" }}>
                 {items.map((item) => (
