@@ -206,6 +206,34 @@ export default function OrderPage() {
     }
 
     const methodTitle = `${PAYMENT_LABELS[method]} (${getPaymentHandle(method)})`;
+
+    // Distribute any coupon discount proportionally across line item totals so
+    // WooCommerce's tax engine (used in confirmation emails) taxes the actual
+    // paid amounts, not the pre-discount subtotal. Without this, BOGO and other
+    // discounts cause WC to over-report tax in emails regardless of whether WC
+    // applies coupons before or after tax. The coupon code is preserved in
+    // meta_data below; we don't send coupon_lines because that would double-
+    // discount a payload where totals already reflect the discount.
+    const discountRatio = subtotal > 0 ? totalPrice / subtotal : 1;
+    let runningLineTotal = 0;
+    const adjustedLineItems = items.map((item, index) => {
+      const lineSubtotal = Math.round(item.price * item.quantity * 100) / 100;
+      let lineTotal: number;
+      if (index === items.length - 1) {
+        lineTotal = Math.max(0, Math.round((totalPrice - runningLineTotal) * 100) / 100);
+      } else {
+        lineTotal = Math.round(lineSubtotal * discountRatio * 100) / 100;
+        runningLineTotal += lineTotal;
+      }
+      return {
+        product_id: item.id,
+        quantity: item.quantity,
+        name: item.name,
+        subtotal: lineSubtotal.toFixed(2),
+        total: lineTotal.toFixed(2),
+      };
+    });
+
     const payload: WCOrderPayload = {
       payment_method: method,
       payment_method_title: methodTitle,
@@ -223,8 +251,8 @@ export default function OrderPage() {
         address_1: form.address, city: form.city,
         state: form.state, postcode: form.zip, country: "US",
       },
-      line_items: items.map((item) => ({ product_id: item.id, quantity: item.quantity, name: item.name })),
-      coupon_lines: appliedCoupon ? [{ code: appliedCoupon.coupon.code }] : undefined,
+      line_items: adjustedLineItems,
+      coupon_lines: undefined,
       shipping_lines: [{ method_title: "Flat Rate", method_id: "flat_rate", total: SHIPPING_RATE.toFixed(2) }],
       customer_note: form.notes || undefined,
       meta_data: [
