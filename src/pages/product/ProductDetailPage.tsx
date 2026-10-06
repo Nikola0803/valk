@@ -16,8 +16,10 @@ import ProductTabContent from "@/pages/product/components/ProductTabContent";
 // Key = base slug (no size suffix), value = ordered array of slugs by size.
 // Add new groups here whenever a new size is added to WooCommerce.
 const VARIANT_GROUPS: Record<string, string[]> = {
-  "nad":     ["nad-500mg",      "nad-1000mg"],
-  "glp-3-rt":["glp-3-rt-10mg", "glp-3-rt-30mg"],
+  "nad":         ["nad-500mg",      "nad-1000mg"],
+  "glp-2-tz":    ["glp-2-tz-10mg",  "glp-2-tz-30mg",  "glp-2-tz-60mg"],
+  "glp-3-rt":    ["glp-3-rt-10mg",  "glp-3-rt-30mg",  "glp-3-rt-60mg"],
+  "5-amino-1mq": ["5-amino-1mq-30mg", "5-amino-1mq-50mg"],
 };
 
 /** Returns the sibling slugs for the current product, or null if it has no variants. */
