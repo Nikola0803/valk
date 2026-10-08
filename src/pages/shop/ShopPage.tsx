@@ -7,6 +7,7 @@ import WaitlistModal from "@/components/feature/WaitlistModal";
 import type { NormalizedProduct } from "@/lib/woocommerce";
 import ShopHero from "@/pages/shop/components/ShopHero";
 import GpSaleBanner from "@/pages/shop/components/GpSaleBanner";
+import GlpSaleBanner from "@/pages/shop/components/GlpSaleBanner";
 import ShopToolbar from "@/pages/shop/components/ShopToolbar";
 import ShopProductGrid from "@/pages/shop/components/ShopProductGrid";
 import ShopTrustStrip from "@/pages/shop/components/ShopTrustStrip";
@@ -57,6 +58,7 @@ export default function ShopPage() {
       <main style={{ paddingTop: 64 }}>
         <ShopHero />
         <GpSaleBanner />
+        <GlpSaleBanner />
         <ShopToolbar
           sort={sort}
           setSort={setSort}

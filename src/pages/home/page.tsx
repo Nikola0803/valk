@@ -4,6 +4,7 @@ import MilitaryBanner from "@/pages/home/components/MilitaryBanner";
 import HeroSection from "@/pages/home/components/HeroSection";
 import TrustBadges from "@/pages/home/components/TrustBadges";
 import GpSaleSection from "@/pages/home/components/GpSaleSection";
+import GlpSaleSection from "@/pages/home/components/GlpSaleSection";
 import BestSellers from "@/pages/home/components/BestSellers";
 import FeatureCards from "@/pages/home/components/FeatureCards";
 import QualitySection from "@/pages/home/components/QualitySection";
@@ -40,6 +41,7 @@ export default function HomePage() {
           <HeroSection />
           <TrustBadges />
           <GpSaleSection />
+          <GlpSaleSection />
           <BestSellers />
           <FeatureCards />
           <QualitySection />
