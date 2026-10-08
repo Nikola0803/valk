@@ -35,7 +35,7 @@ export default function ResearchUseOnlyPage() {
                 <div>
                   <p className="font-black text-white text-base uppercase tracking-wide mb-3">CRITICAL NOTICE - PLEASE READ</p>
                   <p className="text-white/75 text-sm leading-relaxed">
-                    All products sold by Warrior Distributions are EXCLUSIVELY for in vitro research and laboratory use by qualified scientific professionals. These products are NOT approved for human consumption, injection, therapeutic treatment, or veterinary use. Misuse of research chemicals may be illegal and is potentially dangerous.
+                    All products sold by Valkyrie Peptides are EXCLUSIVELY for in vitro research and laboratory use by qualified scientific professionals. These products are NOT approved for human consumption, injection, therapeutic treatment, or veterinary use. Misuse of research chemicals may be illegal and is potentially dangerous.
                   </p>
                 </div>
               </div>
@@ -44,7 +44,7 @@ export default function ResearchUseOnlyPage() {
             <section>
               <h2 className="font-black text-xl uppercase tracking-tight text-[#111] mb-4">1. Scope of This Policy</h2>
               <p className="text-[#555] text-sm leading-relaxed">
-                This Research Use Only (RUO) Policy applies to all products listed on the Warrior Distributions website. It defines the acceptable and prohibited uses of our products and establishes the responsibilities of purchasers. By purchasing from us, you explicitly agree to comply with this policy.
+                This Research Use Only (RUO) Policy applies to all products listed on the Valkyrie Peptides website. It defines the acceptable and prohibited uses of our products and establishes the responsibilities of purchasers. By purchasing from us, you explicitly agree to comply with this policy.
               </p>
             </section>
 
@@ -80,7 +80,7 @@ export default function ResearchUseOnlyPage() {
             <section>
               <h2 className="font-black text-xl uppercase tracking-tight text-[#111] mb-4">3. Purchaser Representations &amp; Warranties</h2>
               <p className="text-[#555] text-sm leading-relaxed mb-4">
-                By purchasing any product from Warrior Distributions, you represent and warrant that:
+                By purchasing any product from Valkyrie Peptides, you represent and warrant that:
               </p>
               <div className="space-y-2">
                 {[
@@ -107,7 +107,7 @@ export default function ResearchUseOnlyPage() {
             <section>
               <h2 className="font-black text-xl uppercase tracking-tight text-[#111] mb-4">4. Regulatory Compliance</h2>
               <p className="text-[#555] text-sm leading-relaxed">
-                Warrior Distributions is a chemical supplier, not a compounding pharmacy or outsourcing facility as defined under Sections 503A or 503B of the Federal Food, Drug, and Cosmetic Act. Our products have not been evaluated by the U.S. Food and Drug Administration (FDA) and are not intended to diagnose, treat, cure, or prevent any disease or condition.
+                Valkyrie Peptides is a chemical supplier, not a compounding pharmacy or outsourcing facility as defined under Sections 503A or 503B of the Federal Food, Drug, and Cosmetic Act. Our products have not been evaluated by the U.S. Food and Drug Administration (FDA) and are not intended to diagnose, treat, cure, or prevent any disease or condition.
               </p>
             </section>
 
@@ -142,7 +142,7 @@ export default function ResearchUseOnlyPage() {
             <section>
               <h2 className="font-black text-xl uppercase tracking-tight text-[#111] mb-4">6. Indemnification</h2>
               <p className="text-[#555] text-sm leading-relaxed">
-                You agree to indemnify, defend, and hold harmless Warrior Distributions, its officers, employees, and agents from any claims, damages, losses, or expenses arising from your misuse of our products or your violation of this Research Use Only Policy or any applicable law.
+                You agree to indemnify, defend, and hold harmless Valkyrie Peptides, its officers, employees, and agents from any claims, damages, losses, or expenses arising from your misuse of our products or your violation of this Research Use Only Policy or any applicable law.
               </p>
             </section>
 
@@ -151,8 +151,8 @@ export default function ResearchUseOnlyPage() {
             <section>
               <h2 className="font-black text-xl uppercase tracking-tight text-[#111] mb-4">7. Contact Us</h2>
               <div className="p-6" style={{ background: "#111", color: "#fff" }}>
-                <p className="font-bold text-sm mb-1">Warrior Distributions - Compliance</p>
-                <p className="text-white/60 text-sm">Phone: (541)-709-5434</p>
+                <p className="font-bold text-sm mb-1">Valkyrie Peptides - Compliance</p>
+                <p className="text-white/60 text-sm">Phone: (208) 243-9222</p>
                 <p className="text-white/60 text-sm mt-1">If you have questions about proper research use, please contact us before purchasing.</p>
               </div>
             </section>

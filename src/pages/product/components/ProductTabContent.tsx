@@ -314,14 +314,14 @@ export default function ProductTabContent({
           <div>
             <h2 className="font-black text-2xl uppercase tracking-tight text-[#111] mb-2">Certificate of Analysis</h2>
             <p className="text-[#888] text-sm mb-10 max-w-xl">
-              Third-party laboratory purity verification for this batch. All Warrior Distributions compounds are independently tested prior to release.
+              Third-party laboratory purity verification for this batch. All Valkyrie Peptides compounds are independently tested prior to release.
             </p>
             {coaImages.length === 0 ? (
               <div className="flex items-center gap-4 p-6" style={{ background: "#f8f7f5", border: "1px solid #e0e0e0" }}>
                 <div className="w-8 h-8 flex items-center justify-center flex-shrink-0">
                   <i className="ri-file-text-line text-[#aaa] text-xl"></i>
                 </div>
-                <p className="text-[#888] text-sm">COA documentation for this product is available upon request. Please contact us at <a href="tel:2082439222" className="text-[#111] font-bold">(541)-709-5434</a>.</p>
+                <p className="text-[#888] text-sm">COA documentation for this product is available upon request. Please contact us at <a href="tel:2082439222" className="text-[#111] font-bold">(208) 243-9222</a>.</p>
               </div>
             ) : (
               <>

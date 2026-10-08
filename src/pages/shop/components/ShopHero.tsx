@@ -12,7 +12,7 @@ export default function ShopHero() {
       <div className="w-full py-16 px-8" style={{ background: "#111111" }}>
         <div className="max-w-[1320px] mx-auto">
           <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-white/40 mb-3">
-            Warrior Distributions
+            Valkyrie Peptides
           </p>
           <h1
             className="font-black uppercase tracking-tight leading-none"

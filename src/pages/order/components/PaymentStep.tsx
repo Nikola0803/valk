@@ -73,7 +73,7 @@ export default function PaymentStep({ method, setMethod, grandTotal, setStep, ca
             </div>
             <div>
               <p className="text-[#111] font-black text-sm uppercase tracking-wide">{PAYMENT_LABELS[m]}</p>
-              <p className="text-[#888] text-xs mt-0.5">{getPaymentHandle(m)} · Warrior Distributions LLC</p>
+              <p className="text-[#888] text-xs mt-0.5">{getPaymentHandle(m)} · Valkyrie Research LLC</p>
             </div>
           </div>
         ))}

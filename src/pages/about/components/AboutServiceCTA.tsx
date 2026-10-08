@@ -8,7 +8,7 @@ export default function AboutServiceCTA() {
         <div className="relative overflow-hidden" style={{ minHeight: 420 }}>
           <img
             src="https://valkyriepeptides.com/wp-content/uploads/2026/04/mis-removebg-preview.png"
-            alt="Warrior Team"
+            alt="Valkyrie Team"
             className="absolute inset-0 w-full h-full object-contain"
           />
           <div className="absolute inset-0" style={{ background: "linear-gradient(to right, rgba(17,17,17,0.5) 0%, transparent 60%)" }} />

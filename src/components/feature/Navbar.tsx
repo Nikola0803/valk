@@ -64,7 +64,7 @@ export default function Navbar() {
           <Link to="/" className="flex-shrink-0">
             <img
               src="https://valkyriepeptides.com/wp-content/uploads/2024/09/Valkyrie-Horizontal-2-1.webp"
-              alt="Warrior Distributions Logo"
+              alt="Valkyrie Peptides Logo"
               className="h-7 w-auto object-contain"
               style={{ filter: "invert(1)" }}
             />

@@ -1,8 +1,8 @@
 export type PaymentMethod = "zelle" | "venmo" | "cashapp" | "card";
 
-export const ZELLE_INFO   = { handle: "509-220-5434",       name: "Warrior Distributions LLC" };
-export const VENMO_INFO = { handle: "@warriordistributions", name: "Warrior Distributions LLC" };
-export const CASHAPP_INFO = { handle: "$warriordistributions",   name: "Warrior Distributions LLC" };
+export const ZELLE_INFO   = { handle: "208-280-3993",       name: "Valkyrie Research LLC" };
+export const VENMO_INFO = { handle: "@valkyrie-research", name: "Valkyrie Research LLC" };
+export const CASHAPP_INFO = { handle: "$ValkyrieResearch",   name: "Valkyrie Research LLC" };
 
 export const PAYMENT_LABELS: Record<PaymentMethod, string> = {
   zelle:   "Zelle",

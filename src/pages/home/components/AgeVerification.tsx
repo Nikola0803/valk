@@ -92,7 +92,7 @@ export default function AgeVerification() {
         {/* Logo */}
         <img
           src="https://valkyriepeptides.com/wp-content/uploads/2024/09/Valkyrie-Horizontal-2-1.webp"
-          alt="Warrior Distributions"
+          alt="Valkyrie Peptides"
           style={{ height: 44, width: "auto", objectFit: "contain", marginBottom: 20 }}
         />
 

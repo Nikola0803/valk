@@ -56,7 +56,7 @@ export default function OrderSuccess({ orderId, method, email, orderTotal, order
             </div>
             <div className="flex items-center justify-between py-3" style={{ borderBottom: "1px solid #ebebeb" }}>
               <span className="text-[#888] text-xs">Recipient</span>
-              <span className="text-[#111] font-bold text-sm">Warrior Distributions LLC</span>
+              <span className="text-[#111] font-bold text-sm">Valkyrie Research LLC</span>
             </div>
             <div className="flex items-center justify-between py-3" style={{ borderBottom: "1px solid #ebebeb" }}>
               <span className="text-[#888] text-xs">Shipping</span>

@@ -6,7 +6,7 @@ export default function BlogHero() {
       {/* Dark header */}
       <div style={{ background: "#111111" }} className="py-10 md:py-16 px-4 md:px-8">
         <div className="max-w-[1320px] mx-auto">
-          <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-white/30 mb-3">Warrior Distributions</p>
+          <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-white/30 mb-3">Valkyrie Peptides</p>
           <h1
             className="font-black uppercase leading-[0.88] tracking-tight"
             style={{

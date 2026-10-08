@@ -54,7 +54,7 @@ export const wolverineProduct: ProductDetail = {
     { icon: "ri-award-line", label: "3rd Party Tested", color: "#111" },
     { icon: "ri-flask-line", label: "CoA Included", color: "#111" },
   ],
-  description: `Wolverine is Warrior Distributions' flagship research blend, combining two of the most studied peptide compounds in a single lyophilized formulation. Developed for researchers exploring cellular regeneration, structural tissue repair, and actin-myosin interaction pathways.
+  description: `Wolverine is Valkyrie Peptides' flagship research blend, combining two of the most studied peptide compounds in a single lyophilized formulation. Developed for researchers exploring cellular regeneration, structural tissue repair, and actin-myosin interaction pathways.
 
 Each vial contains 20mg of research-grade material verified by independent third-party laboratories. Purity certificates (CoA) are available upon request and are issued by accredited US laboratories.`,
   specifications: [
@@ -133,7 +133,7 @@ Each vial contains 20mg of research-grade material verified by independent third
     },
     {
       q: "Is this product intended for human use?",
-      a: "No. All Warrior Distributions products are strictly for research use only and are not intended for human consumption, injection, or therapeutic use.",
+      a: "No. All Valkyrie Peptides products are strictly for research use only and are not intended for human consumption, injection, or therapeutic use.",
     },
   ],
   relatedProducts: [
@@ -225,7 +225,7 @@ function buildGenericProduct(
         name: "M. Reyes, PhD",
         role: "Biochemistry Lab Director",
         rating: 5,
-        text: "Batch-to-batch reliability is exceptional. The lyophilization quality sets Warrior apart from other vendors.",
+        text: "Batch-to-batch reliability is exceptional. The lyophilization quality sets Valkyrie apart from other vendors.",
         initials: "MR",
       },
       {
@@ -255,7 +255,7 @@ function buildGenericProduct(
       },
       {
         q: "Is this product intended for human use?",
-        a: "No. All Warrior Distributions products are strictly for research use only and are not intended for human consumption, injection, or therapeutic use.",
+        a: "No. All Valkyrie Peptides products are strictly for research use only and are not intended for human consumption, injection, or therapeutic use.",
       },
     ],
     relatedProducts: related,
@@ -342,7 +342,7 @@ export const productCatalog: Record<string, ProductDetail> = {
     "~4,800 Da",
     "99.1%",
     "70mg / vial",
-    `GLOW is Warrior\'s signature skin research blend, combining three of the most studied dermatological peptides into a single formulation. Developed for researchers exploring collagen synthesis pathways, skin barrier integrity, and epigenetic aging mechanisms.\n\nEach 70mg vial is independently tested for purity and identity by certified US laboratories.`,
+    `GLOW is Valkyrie\'s signature skin research blend, combining three of the most studied dermatological peptides into a single formulation. Developed for researchers exploring collagen synthesis pathways, skin barrier integrity, and epigenetic aging mechanisms.\n\nEach 70mg vial is independently tested for purity and identity by certified US laboratories.`,
     [
       { title: "Collagen Synthesis Pathways", desc: "GHK-Cu component supports research into collagen and elastin production signaling.", icon: "ri-heart-pulse-line" },
       { title: "Epigenetic Aging Research", desc: "Epithalon component enables study of telomerase activation and telomere length regulation.", icon: "ri-microscope-line" },
@@ -510,7 +510,7 @@ export const productCatalog: Record<string, ProductDetail> = {
     "~4,964 Da",
     "99.3%",
     "10mg / vial",
-    `TB-500 is the synthetic analogue of Thymosin Beta-4, a naturally occurring peptide that plays a critical role in actin regulation and cellular migration. It is among the most studied peptides for tissue repair research.\n\nPublished research covers musculoskeletal recovery, cardiac repair models, and neuroregeneration studies. All Warrior TB-500 is lyophilized and independently tested in the USA.`,
+    `TB-500 is the synthetic analogue of Thymosin Beta-4, a naturally occurring peptide that plays a critical role in actin regulation and cellular migration. It is among the most studied peptides for tissue repair research.\n\nPublished research covers musculoskeletal recovery, cardiac repair models, and neuroregeneration studies. All Valkyrie TB-500 is lyophilized and independently tested in the USA.`,
     [
       { title: "Actin Sequestration Research", desc: "Thymosin Beta-4\'s primary function in regulating G-actin enables cell motility and migration studies.", icon: "ri-heart-pulse-line" },
       { title: "Cardiac Repair Models", desc: "Supports investigation of cardiomyocyte survival and regeneration following ischemia in research models.", icon: "ri-microscope-line" },
@@ -573,7 +573,7 @@ export const productCatalog: Record<string, ProductDetail> = {
     "~3,297 Da",
     "99.2%",
     "10mg / vial",
-    `GLP-1 (SM) is a stabilized small-molecule analogue of native GLP-1 designed for enhanced receptor binding selectivity and extended research utility in metabolic studies.\n\nUsed across insulin secretion, beta-cell survival, and satiety signaling research. All Warrior GP-1 is independently tested in US-accredited laboratories.`,
+    `GLP-1 (SM) is a stabilized small-molecule analogue of native GLP-1 designed for enhanced receptor binding selectivity and extended research utility in metabolic studies.\n\nUsed across insulin secretion, beta-cell survival, and satiety signaling research. All Valkyrie GP-1 is independently tested in US-accredited laboratories.`,
     [
       { title: "GLP-1 Receptor Studies", desc: "Enables investigation of native and allosteric GLP-1 receptor binding interactions.", icon: "ri-heart-pulse-line" },
       { title: "Beta-Cell Function Research", desc: "Supports study of glucose-stimulated insulin secretion and beta-cell survival mechanisms.", icon: "ri-microscope-line" },

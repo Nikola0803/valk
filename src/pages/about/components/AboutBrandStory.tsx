@@ -12,10 +12,10 @@ export default function AboutBrandStory() {
           </h2>
           <div className="space-y-5 text-[#555] text-sm leading-relaxed">
             <p>
-              Warrior Distributions was founded with a single purpose: to give researchers access to the highest-quality peptides available - backed by real analytical data, not marketing promises.
+              Valkyrie Peptides was founded with a single purpose: to give researchers access to the highest-quality peptides available - backed by real analytical data, not marketing promises.
             </p>
             <p>
-              We recognized a gap in the market. Too many suppliers were offering underdocumented, inconsistently manufactured peptides that undermined research outcomes. We built Warrior to be different - a company where scientific transparency isn&apos;t a selling point, it&apos;s the baseline.
+              We recognized a gap in the market. Too many suppliers were offering underdocumented, inconsistently manufactured peptides that undermined research outcomes. We built Valkyrie to be different - a company where scientific transparency isn&apos;t a selling point, it&apos;s the baseline.
             </p>
             <p>
               Every peptide we sell is lyophilized domestically, purified to research-grade standards, and independently verified by certified third-party labs. We publish our Certificates of Analysis publicly because we have nothing to hide and everything to prove.
@@ -30,7 +30,7 @@ export default function AboutBrandStory() {
           <div className="relative overflow-hidden" style={{ height: 340, background: "#f0ede8" }}>
             <img
               src="https://valkyriepeptides.com/wp-content/uploads/2026/04/IMG_6411.jpg"
-              alt="Warrior Distributions Research"
+              alt="Valkyrie Peptides Research"
               className="w-full h-full object-cover object-top"
             />
             <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 60%)" }} />

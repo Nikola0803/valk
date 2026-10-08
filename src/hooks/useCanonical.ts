@@ -6,7 +6,7 @@
 
 import { useEffect } from "react";
 
-const BASE_URL = "https://warriordistributions.com";
+const BASE_URL = "https://valkyriepeps.com";
 
 export function useCanonical(path?: string) {
   useEffect(() => {

@@ -1,5 +1,5 @@
 /**
- * WooCommerce REST API client for Warrior Distributions
+ * WooCommerce REST API client for Valkyrie Peptides
  *
  * Keys live in .env:
  *   VITE_WC_URL          = https://your-wp-site.com
@@ -359,7 +359,7 @@ export async function validateCoupon(
 /**
  * Extracts the content amount (e.g. "100mg", "10ml") from a product slug or name.
  * Matches the last number+unit pattern (mg, ml, mcg, iu, g) in the slug.
- * This is how all Warrior products are named: "pt-141-10mg", "bac-water-10ml".
+ * This is how all Valkyrie products are named: "pt-141-10mg", "bac-water-10ml".
  * No WooCommerce attribute setup required - works automatically for every product.
  */
 function extractContent(slug: string, name: string): string | null {
@@ -377,11 +377,11 @@ function extractContent(slug: string, name: string): string | null {
 export function normalizeProduct(p: WCProduct) {
   const content = extractContent(p.slug, p.name);
 
-  // Read Warrior tab meta written by import-product-tabs.php
-  const metaCoa      = p.meta_data.find((m) => m.key === "_warrior_coa_images")?.value ?? "";
-  const metaInfo     = p.meta_data.find((m) => m.key === "_warrior_additional_info")?.value ?? "";
-  const purityPdf    = (p.meta_data.find((m) => m.key === "_warrior_coa_purity_pdf")?.value as string) ?? "";
-  const endotoxinPdf = (p.meta_data.find((m) => m.key === "_warrior_coa_endotoxin_pdf")?.value as string) ?? "";
+  // Read Valkyrie tab meta written by import-product-tabs.php
+  const metaCoa      = p.meta_data.find((m) => m.key === "_valkyrie_coa_images")?.value ?? "";
+  const metaInfo     = p.meta_data.find((m) => m.key === "_valkyrie_additional_info")?.value ?? "";
+  const purityPdf    = (p.meta_data.find((m) => m.key === "_valkyrie_coa_purity_pdf")?.value as string) ?? "";
+  const endotoxinPdf = (p.meta_data.find((m) => m.key === "_valkyrie_coa_endotoxin_pdf")?.value as string) ?? "";
 
   let coaImages: string[] = [];
   try {
