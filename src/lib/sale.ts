@@ -35,11 +35,63 @@ export function isGlpSaleSlug(slug: string): boolean {
   return GLP_SALE_SLUG_PREFIXES.some((prefix) => s.startsWith(prefix));
 }
 
+/**
+ * Runtime on/off override for the GLP sale, set from wp-admin (Valkyrie
+ * Frontend -> GLP Sale) and read from /wp-json/valkyrie/v1/glp-sale -
+ * see VROUTER_Glp_Sale in the valkyrie-router plugin. Lets the sale be
+ * toggled or have its discount percent changed without a frontend rebuild.
+ * "auto" (the default before this loads, and if the fetch fails) falls
+ * back to the GLP_SALE_START/GLP_SALE_END dates below.
+ */
+export type GlpSaleMode = "auto" | "on" | "off";
+
+let glpSaleOverride: { mode: GlpSaleMode; percent: number } | null = null;
+let glpSaleOverridePromise: Promise<void> | null = null;
+
+export function loadGlpSaleOverride(): Promise<void> {
+  if (glpSaleOverridePromise) return glpSaleOverridePromise;
+  glpSaleOverridePromise = (async () => {
+    try {
+      const wcUrl = import.meta.env.VITE_WC_URL as string | undefined;
+      if (!wcUrl) return;
+      const res = await fetch(`${wcUrl}/wp-json/valkyrie/v1/glp-sale`);
+      if (!res.ok) return;
+      const data = (await res.json()) as { mode?: string; percent?: number };
+      if (data.mode === "auto" || data.mode === "on" || data.mode === "off") {
+        glpSaleOverride = {
+          mode: data.mode,
+          percent: typeof data.percent === "number" && data.percent > 0 ? data.percent : GLP_SALE_DISCOUNT_PERCENT,
+        };
+      }
+    } catch {
+      // Keep the date-based default - no admin override available.
+    }
+  })();
+  return glpSaleOverridePromise;
+}
+// Kick off immediately at module load, same pattern as coaData.ts's live
+// library fetch - by the time product data or UI needs this, it's usually
+// already resolved; falls back to the date-based schedule until it is.
+loadGlpSaleOverride();
+
 export function isGlpSaleLive(now: Date = new Date()): boolean {
+  if (glpSaleOverride?.mode === "on") return true;
+  if (glpSaleOverride?.mode === "off") return false;
   return now >= GLP_SALE_START && now < GLP_SALE_END;
 }
 
-/** Applies GLP_SALE_DISCOUNT_PERCENT off a regular price, rounded to cents. */
+/** The live discount percent - the wp-admin override if set, else GLP_SALE_DISCOUNT_PERCENT. */
+export function getGlpSaleDiscountPercent(): number {
+  return glpSaleOverride?.percent ?? GLP_SALE_DISCOUNT_PERCENT;
+}
+
+/** The wp-admin override mode, or "auto" if unset/not yet loaded. */
+export function getGlpSaleMode(): GlpSaleMode {
+  return glpSaleOverride?.mode ?? "auto";
+}
+
+/** Applies the live GLP sale discount off a regular price, rounded to cents. */
 export function glpSalePrice(regularPrice: number): number {
-  return Math.round(regularPrice * (1 - GLP_SALE_DISCOUNT_PERCENT / 100) * 100) / 100;
+  const percent = getGlpSaleDiscountPercent();
+  return Math.round(regularPrice * (1 - percent / 100) * 100) / 100;
 }

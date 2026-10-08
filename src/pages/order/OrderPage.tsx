@@ -8,6 +8,7 @@ import { createOrder, validateCoupon, type WCOrderPayload } from "@/lib/woocomme
 import { createPaymentSession } from "@/lib/circoflows";
 import { getAttributionMetaData } from "@/lib/attribution";
 import { getSession } from "@/lib/wcAuth";
+import { trackBeginCheckout, trackAddShippingInfo, trackAddPaymentInfo, trackPurchase } from "@/lib/analytics";
 import {
   getTaxRate, SHIPPING_RATE, PAYMENT_LABELS, getPaymentHandle, isManualPaymentMethod,
   EMAIL_RE, type PaymentMethod,
@@ -107,6 +108,13 @@ export default function OrderPage() {
     if (!appliedCoupon) {
       triggerDcodeReloadWorkaround();
     }
+    // Checkout funnel start - fires once per mount, matching GA4's begin_checkout
+    // semantics (reached the checkout page with a non-empty cart). Skipped when
+    // returning from CircoFlows's hosted card page (returningCardRef) - that's a
+    // mid-flow redirect back, not a fresh checkout start.
+    if (items.length > 0 && !returningCardRef) {
+      trackBeginCheckout(items);
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -167,7 +175,14 @@ export default function OrderPage() {
     if (empty) { setFieldError("Please fill in all required fields."); return; }
     if (!EMAIL_RE.test(form.email)) { setFieldError("Please enter a valid email address."); return; }
     setFieldError("");
+    trackAddShippingInfo(items);
     setStep(2);
+    window.scrollTo(0, 0);
+  };
+
+  const handleContinueToReview = () => {
+    trackAddPaymentInfo(items, PAYMENT_LABELS[method]);
+    setStep(3);
     window.scrollTo(0, 0);
   };
 
@@ -244,9 +259,19 @@ export default function OrderPage() {
     };
     try {
       const order = await createOrder(payload);
+      const orderNumber = order.number ?? String(order.id);
       setOrderTotal(grandTotal);
       setOrderTax(taxAmount);
-      setOrderId(order.number ?? String(order.id));
+      setOrderId(orderNumber);
+      trackPurchase({
+        orderId: orderNumber,
+        value: grandTotal,
+        tax: taxAmount,
+        shipping: SHIPPING_RATE,
+        paymentType: PAYMENT_LABELS[method],
+        coupon: appliedCoupon?.coupon.code,
+        items,
+      });
       clearCart();
       sessionStorage.removeItem(SHIPPING_FORM_DRAFT_KEY);
       setSubmitted(true);
@@ -322,6 +347,7 @@ export default function OrderPage() {
                 setMethod={setMethod}
                 grandTotal={grandTotal}
                 setStep={setStep}
+                onContinue={handleContinueToReview}
                 cardDisabled={cardUnavailable}
               />
             )}

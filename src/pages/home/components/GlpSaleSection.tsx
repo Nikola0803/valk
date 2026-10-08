@@ -3,7 +3,9 @@ import { Link } from "react-router-dom";
 import { useCart } from "@/hooks/useCart";
 import { useProducts } from "@/hooks/useProducts";
 import { useCountdown } from "@/hooks/useCountdown";
-import { GLP_SALE_START, GLP_SALE_END, GLP_SALE_DISCOUNT_PERCENT, isGlpSaleSlug } from "@/lib/sale";
+import { useGlpSalePercent } from "@/hooks/useGlpSalePercent";
+import { useGlpSaleMode } from "@/hooks/useGlpSaleMode";
+import { GLP_SALE_START, GLP_SALE_END, isGlpSaleSlug } from "@/lib/sale";
 import type { NormalizedProduct } from "@/lib/woocommerce";
 
 function CountdownUnit({ value, label }: { value: number; label: string }) {
@@ -36,9 +38,13 @@ export default function GlpSaleSection() {
   const { products, loading } = useProducts();
   const startCountdown = useCountdown(GLP_SALE_START);
   const endCountdown = useCountdown(GLP_SALE_END);
+  const discountPercent = useGlpSalePercent();
+  const saleMode = useGlpSaleMode();
 
-  const hasStarted = startCountdown.expired;
-  const hasEnded = endCountdown.expired;
+  // wp-admin can force the sale on/off regardless of the scheduled dates
+  // (VROUTER_Glp_Sale) - "auto" (the default) falls back to the countdown.
+  const hasStarted = saleMode === "on" ? true : saleMode === "off" ? false : startCountdown.expired;
+  const hasEnded = saleMode === "off" ? true : saleMode === "on" ? false : endCountdown.expired;
   const countdown = hasStarted ? endCountdown : startCountdown;
 
   const saleItems = products.filter((p) => isGlpSaleSlug(p.slug));
@@ -63,7 +69,7 @@ export default function GlpSaleSection() {
               Limited Time
             </span>
             <h2 className="font-black uppercase leading-[0.88] tracking-tight" style={{ fontSize: "clamp(36px, 5vw, 64px)", background: "linear-gradient(135deg, #888 0%, #c0c0c0 35%, #666 60%, #aaa 80%, #777 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-              {GLP_SALE_DISCOUNT_PERCENT}% OFF<br />
+              {discountPercent}% OFF<br />
               <span style={{ background: "linear-gradient(135deg, #777 0%, #b0b0b0 30%, #555 55%, #999 75%, #666 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", fontFamily: "'Oswald', sans-serif", fontWeight: 700 }}>GLP PRODUCTS</span>
             </h2>
             <p className="text-[#888] text-sm leading-relaxed mt-4 max-w-sm">
@@ -91,7 +97,7 @@ export default function GlpSaleSection() {
         {!hasStarted && (
           <div className="py-16 text-center" style={{ borderTop: "1px solid #e5e5e5" }}>
             <p className="text-sm text-[#888]">
-              {GLP_SALE_DISCOUNT_PERCENT}% off GLP products unlocks when the countdown hits zero.
+              {discountPercent}% off GLP products unlocks when the countdown hits zero.
             </p>
           </div>
         )}
@@ -124,7 +130,7 @@ export default function GlpSaleSection() {
               <Link to={`/products/${product.slug}`} className="relative overflow-hidden block" style={{ background: "#f0ede8", height: 300 }}>
                 <div className="absolute top-4 left-4 z-10">
                   <span className="text-[9px] font-black uppercase tracking-widest px-3 py-1.5" style={{ background: "#dc2626", color: "#fff" }}>
-                    {GLP_SALE_DISCOUNT_PERCENT}% Off
+                    {discountPercent}% Off
                   </span>
                 </div>
                 <img

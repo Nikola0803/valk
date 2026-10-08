@@ -5,11 +5,13 @@ interface PaymentStepProps {
   setMethod: (m: PaymentMethod) => void;
   grandTotal: number;
   setStep: (s: 1 | 2 | 3) => void;
+  /** Advances to the review step - fires add_payment_info tracking first (see OrderPage.tsx). */
+  onContinue: () => void;
   /** True once a card attempt has declined/failed this session - card becomes unselectable. */
   cardDisabled?: boolean;
 }
 
-export default function PaymentStep({ method, setMethod, grandTotal, setStep, cardDisabled }: PaymentStepProps) {
+export default function PaymentStep({ method, setMethod, grandTotal, setStep, onContinue, cardDisabled }: PaymentStepProps) {
   return (
     <div>
       <h2 className="font-black uppercase tracking-tight text-[#111] text-xl mb-8">Payment Method</h2>
@@ -106,7 +108,7 @@ export default function PaymentStep({ method, setMethod, grandTotal, setStep, ca
           Back
         </button>
         <button
-          onClick={() => { setStep(3); window.scrollTo(0, 0); }}
+          onClick={onContinue}
           className="flex-1 font-black uppercase tracking-widest text-[11px] py-4 cursor-pointer whitespace-nowrap"
           style={{ background: "#111", color: "#fff" }}
         >

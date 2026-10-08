@@ -11,6 +11,7 @@ import ProductPurchasePanel from "@/pages/product/components/ProductPurchasePane
 import ProductFAQSection from "@/pages/product/components/ProductFAQSection";
 import ProductTabBar, { type TabKey } from "@/pages/product/components/ProductTabBar";
 import ProductTabContent from "@/pages/product/components/ProductTabContent";
+import { trackViewItem } from "@/lib/analytics";
 import { useCoaEntry } from "@/hooks/useCoaEntry";
 import { coaEntryDocUrls } from "@/pages/coa/coaData";
 
@@ -93,6 +94,7 @@ export default function ProductDetailPage() {
         } else {
           const normalized = normalizeProduct(wc);
           setProduct(normalized);
+          trackViewItem(normalized);
           // Fetch real WooCommerce reviews for this product
           setReviewsLoading(true);
           getProductReviews(wc.id)

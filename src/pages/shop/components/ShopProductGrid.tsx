@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import type { NormalizedProduct } from "@/lib/woocommerce";
+import { trackSelectItem } from "@/lib/analytics";
 
 interface ShopProductGridProps {
   loading: boolean;
@@ -65,6 +66,7 @@ export default function ShopProductGrid({
               >
                 <Link
                   to={`/products/${product.slug}`}
+                  onClick={() => trackSelectItem(product, "Shop")}
                   className="relative overflow-hidden block cursor-pointer"
                   style={{ background: "#f0ede8", height: 300 }}
                 >

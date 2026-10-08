@@ -1,5 +1,7 @@
 import { useCountdown } from "@/hooks/useCountdown";
-import { GLP_SALE_START, GLP_SALE_END, GLP_SALE_DISCOUNT_PERCENT } from "@/lib/sale";
+import { useGlpSalePercent } from "@/hooks/useGlpSalePercent";
+import { useGlpSaleMode } from "@/hooks/useGlpSaleMode";
+import { GLP_SALE_START, GLP_SALE_END } from "@/lib/sale";
 
 function pad(n: number) {
   return String(n).padStart(2, "0");
@@ -14,8 +16,11 @@ function pad(n: number) {
 export default function GlpSaleBanner() {
   const startCountdown = useCountdown(GLP_SALE_START);
   const endCountdown = useCountdown(GLP_SALE_END);
-  const hasStarted = startCountdown.expired;
-  const hasEnded = endCountdown.expired;
+  const discountPercent = useGlpSalePercent();
+  const saleMode = useGlpSaleMode();
+
+  const hasStarted = saleMode === "on" ? true : saleMode === "off" ? false : startCountdown.expired;
+  const hasEnded = saleMode === "off" ? true : saleMode === "on" ? false : endCountdown.expired;
   const countdown = hasStarted ? endCountdown : startCountdown;
 
   if (hasEnded) return null;
@@ -28,7 +33,7 @@ export default function GlpSaleBanner() {
           Limited Time
         </span>
         <span className="text-white font-black uppercase text-sm tracking-tight">
-          {GLP_SALE_DISCOUNT_PERCENT}% Off GLP Products
+          {discountPercent}% Off GLP Products
         </span>
         <span className="text-white/40 text-xs">·</span>
         <span className="text-white/70 text-xs font-bold uppercase tracking-widest tabular-nums">
