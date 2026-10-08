@@ -21,3 +21,25 @@ export const GP_SALE_DISCOUNT_PERCENT = 30;
 export const GLP_SALE_START = new Date("2026-10-09T06:00:00Z"); // Thu 2026-10-08 midnight MT (= Fri 00:00 MT)
 export const GLP_SALE_END = new Date("2026-10-16T06:00:00Z"); // Thu 2026-10-15 midnight MT (= Fri 00:00 MT)
 export const GLP_SALE_DISCOUNT_PERCENT = 35;
+
+/**
+ * Slug prefixes that make a product part of the GLP sale - the GLP-1/2/3
+ * line plus Cagrilinitide, at any dose/size. Matched against the slug
+ * (lowercased) so every current and future size of these products (e.g.
+ * glp-2-tz-10mg, glp-2-tz-60mg) is covered without listing exact slugs.
+ */
+const GLP_SALE_SLUG_PREFIXES = ["glp-1", "glp-2", "glp-3", "cagril"];
+
+export function isGlpSaleSlug(slug: string): boolean {
+  const s = slug.toLowerCase();
+  return GLP_SALE_SLUG_PREFIXES.some((prefix) => s.startsWith(prefix));
+}
+
+export function isGlpSaleLive(now: Date = new Date()): boolean {
+  return now >= GLP_SALE_START && now < GLP_SALE_END;
+}
+
+/** Applies GLP_SALE_DISCOUNT_PERCENT off a regular price, rounded to cents. */
+export function glpSalePrice(regularPrice: number): number {
+  return Math.round(regularPrice * (1 - GLP_SALE_DISCOUNT_PERCENT / 100) * 100) / 100;
+}

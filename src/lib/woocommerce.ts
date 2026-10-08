@@ -7,6 +7,8 @@
  *   VITE_WC_SECRET       = cs_...
  */
 
+import { isGlpSaleLive, isGlpSaleSlug, glpSalePrice } from "@/lib/sale";
+
 const WC_URL    = import.meta.env.VITE_WC_URL    as string;
 const WC_KEY    = import.meta.env.VITE_WC_KEY    as string;
 const WC_SECRET = import.meta.env.VITE_WC_SECRET as string;
@@ -376,6 +378,12 @@ function extractContent(slug: string, name: string): string | null {
  */
 export function normalizeProduct(p: WCProduct) {
   const content = extractContent(p.slug, p.name);
+  const regularPrice = parseFloat(p.regular_price) || parseFloat(p.price) || 0;
+
+  // GLP sale (see lib/sale.ts) auto-applies its discount to the GLP-1/2/3 +
+  // Cagrilinitide line while it's live, straight off the regular price -
+  // doesn't depend on anyone setting a WooCommerce sale_price per product.
+  const glpSaleActive = isGlpSaleLive() && isGlpSaleSlug(p.slug);
 
   // Read Valkyrie tab meta written by import-product-tabs.php
   const metaCoa      = p.meta_data.find((m) => m.key === "_valkyrie_coa_images")?.value ?? "";
@@ -393,9 +401,9 @@ export function normalizeProduct(p: WCProduct) {
     slug: p.slug,
     name: p.name,
     category: p.categories[0]?.name ?? "Peptides",
-    price: parseFloat(p.price) || 0,
-    originalPrice: parseFloat(p.regular_price) || parseFloat(p.price) || 0,
-    onSale: !!p.on_sale,
+    price: glpSaleActive ? glpSalePrice(regularPrice) : (parseFloat(p.price) || 0),
+    originalPrice: regularPrice,
+    onSale: glpSaleActive || !!p.on_sale,
     featured: !!p.featured,
     image: p.images[0]?.src ?? "/placeholder.png",
     images: p.images.map((img) => img.src),

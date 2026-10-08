@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useCart } from "@/hooks/useCart";
 import { useProducts } from "@/hooks/useProducts";
 import { useCountdown } from "@/hooks/useCountdown";
-import { GLP_SALE_START, GLP_SALE_END, GLP_SALE_DISCOUNT_PERCENT } from "@/lib/sale";
+import { GLP_SALE_START, GLP_SALE_END, GLP_SALE_DISCOUNT_PERCENT, isGlpSaleSlug } from "@/lib/sale";
 import type { NormalizedProduct } from "@/lib/woocommerce";
 
 function CountdownUnit({ value, label }: { value: number; label: string }) {
@@ -20,10 +20,15 @@ function CountdownUnit({ value, label }: { value: number; label: string }) {
 /**
  * The GLP sale - a duplicate of GpSaleSection's layout, run as its own
  * standalone sale (see lib/sale.ts) rather than sharing the GP line's
- * schedule/discount. Before GLP_SALE_START it shows a teaser with a
- * "Starts in" countdown and no product grid; once live it shows the full
- * grid + "Ends in" countdown, same as GpSaleSection. Renders nothing once
- * GLP_SALE_END passes.
+ * schedule/discount. Shows the GLP-1/2/3 line + Cagrilinitide specifically
+ * (matched by slug via isGlpSaleSlug, not the WooCommerce "Featured" flag),
+ * so it doesn't depend on anyone remembering to flag them in wp-admin.
+ * Pricing (product.price/originalPrice) already reflects the 35% discount -
+ * normalizeProduct() in lib/woocommerce.ts auto-applies it off the regular
+ * price while the sale is live, no WooCommerce sale_price needed either.
+ * Before GLP_SALE_START it shows a teaser with a "Starts in" countdown and
+ * no product grid; once live it shows the full grid + "Ends in" countdown,
+ * same as GpSaleSection. Renders nothing once GLP_SALE_END passes.
  */
 export default function GlpSaleSection() {
   const [added, setAdded] = useState<number | null>(null);
@@ -36,7 +41,7 @@ export default function GlpSaleSection() {
   const hasEnded = endCountdown.expired;
   const countdown = hasStarted ? endCountdown : startCountdown;
 
-  const saleItems = products.filter((p) => p.featured && p.onSale);
+  const saleItems = products.filter((p) => isGlpSaleSlug(p.slug));
 
   const handleAdd = (product: NormalizedProduct) => {
     addItem({ id: product.id, slug: product.slug, name: product.name, price: product.price, image: product.image });

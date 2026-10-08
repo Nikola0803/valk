@@ -75,6 +75,13 @@ export default function ShopProductGrid({
                       </span>
                     </div>
                   )}
+                  {product.onSale && product.originalPrice > product.price && (
+                    <div className="absolute top-4 left-4 z-10">
+                      <span className="text-[9px] font-black uppercase tracking-widest px-3 py-1.5" style={{ background: "#dc2626", color: "#fff" }}>
+                        {Math.round((1 - product.price / product.originalPrice) * 100)}% Off
+                      </span>
+                    </div>
+                  )}
                   <img
                     src={product.image}
                     alt={product.name}
@@ -97,7 +104,12 @@ export default function ShopProductGrid({
                   </div>
 
                   <div className="flex items-center justify-between mb-5">
-                    <span className="text-[#111111] font-black text-2xl">${product.price.toFixed(2)}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[#111111] font-black text-2xl">${product.price.toFixed(2)}</span>
+                      {product.onSale && product.originalPrice > product.price && (
+                        <span className="text-[#bbb] text-sm line-through">${product.originalPrice.toFixed(2)}</span>
+                      )}
+                    </div>
                     <span className="text-[#aaa] text-[10px] uppercase tracking-widest">USD</span>
                   </div>
 
