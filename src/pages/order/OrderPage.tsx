@@ -11,7 +11,7 @@ import { getSession } from "@/lib/wcAuth";
 import { trackBeginCheckout, trackAddShippingInfo, trackAddPaymentInfo, trackPurchase } from "@/lib/analytics";
 import {
   getTaxRate, SHIPPING_RATE, PAYMENT_LABELS, getPaymentHandle, isManualPaymentMethod,
-  EMAIL_RE, type PaymentMethod,
+  ALT_PAYMENT_DISCOUNT_RATE, EMAIL_RE, type PaymentMethod,
 } from "@/pages/order/orderData";
 import type { OrderForm } from "@/pages/order/components/ShippingStep";
 import OrderEmptyCart from "@/pages/order/components/OrderEmptyCart";
@@ -45,7 +45,7 @@ const BLANK_ORDER_FORM: OrderForm = {
 };
 
 export default function OrderPage() {
-  const { items, totalPrice, subtotal, discountAmount, appliedCoupon, setCoupon, clearCart } = useCart();
+  const { items, totalPrice, subtotal, discountAmount, bogoDiscount, discountsLocked, appliedCoupon, setCoupon, clearCart } = useCart();
   const [searchParams] = useSearchParams();
 
   // Present after a full-page redirect back from CircoFlows's hosted card page.
@@ -133,8 +133,21 @@ export default function OrderPage() {
   }, [appliedCoupon]);
 
   const taxRate    = useMemo(() => getTaxRate(form.state), [form.state]);
-  const taxAmount  = useMemo(() => Math.round(totalPrice * (taxRate / 100) * 100) / 100, [totalPrice, taxRate]);
-  const grandTotal = useMemo(() => Math.round((totalPrice + taxAmount + SHIPPING_RATE) * 100) / 100, [totalPrice, taxAmount]);
+  // Zelle/Venmo/Cash App's extra 5% off - shown on checkout whenever a manual
+  // method is selected, but its effect is zero (still shown, just $0.00)
+  // once the GLP sale or BOGO already discounts this cart - see
+  // discountsLocked in useCart.tsx. "it just shows on checkout, doesn't get
+  // applied" - the coupon/affiliate code still gets sent and attributed,
+  // but can't add savings on top of what the sale/BOGO already gives.
+  const altPaymentDiscount = useMemo(
+    () => (isManualPaymentMethod(method) && !discountsLocked
+      ? Math.round(totalPrice * (ALT_PAYMENT_DISCOUNT_RATE / 100) * 100) / 100
+      : 0),
+    [method, discountsLocked, totalPrice]
+  );
+  const postDiscountTotal = Math.max(0, totalPrice - altPaymentDiscount);
+  const taxAmount  = useMemo(() => Math.round(postDiscountTotal * (taxRate / 100) * 100) / 100, [postDiscountTotal, taxRate]);
+  const grandTotal = useMemo(() => Math.round((postDiscountTotal + taxAmount + SHIPPING_RATE) * 100) / 100, [postDiscountTotal, taxAmount]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -247,7 +260,17 @@ export default function OrderPage() {
         const lineTotal = (item.price * item.quantity).toFixed(2);
         return { product_id: item.id, quantity: item.quantity, name: item.name, subtotal: lineTotal, total: lineTotal };
       }),
+      // coupon_lines is still sent unconditionally (even when discountsLocked)
+      // so the affiliate/coupon still gets attributed on the order - the
+      // server neutralizes its price effect back to $0 when a sale/BOGO
+      // discount already applies to this cart (VROUTER_Glp_Sale /
+      // VROUTER_Bogo in the valkyrie-router plugin), it never skips
+      // recording the coupon itself.
       coupon_lines: appliedCoupon ? [{ code: appliedCoupon.coupon.code }] : undefined,
+      fee_lines: [
+        ...(bogoDiscount > 0 ? [{ name: "Buy 2 Get 1 Free", total: (-bogoDiscount).toFixed(2), tax_class: "", tax_status: "none" }] : []),
+        ...(altPaymentDiscount > 0 ? [{ name: `${ALT_PAYMENT_DISCOUNT_RATE}% off - ${PAYMENT_LABELS[method]}`, total: (-altPaymentDiscount).toFixed(2), tax_class: "", tax_status: "none" }] : []),
+      ],
       shipping_lines: [{ method_title: "Flat Rate", method_id: "flat_rate", total: SHIPPING_RATE.toFixed(2) }],
       customer_note: form.notes || undefined,
       meta_data: [
@@ -382,6 +405,10 @@ export default function OrderPage() {
               items={items}
               subtotal={subtotal}
               discountAmount={discountAmount}
+              bogoDiscount={bogoDiscount}
+              altPaymentDiscount={altPaymentDiscount}
+              discountsLocked={discountsLocked}
+              showAltPaymentLine={isManualPaymentMethod(method)}
               appliedCoupon={appliedCoupon}
               couponCode={couponCode}
               setCouponCode={setCouponCode}

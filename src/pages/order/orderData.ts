@@ -23,6 +23,17 @@ export function getPaymentHandle(m: PaymentMethod): string {
   return ZELLE_INFO.handle;
 }
 
+/**
+ * Zelle/Venmo/Cash App skip card-processing fees, so they're offered this
+ * much cheaper than card - applied to the product subtotal only (not tax/
+ * shipping). Shown on checkout whenever a manual method is selected, but
+ * its actual effect is zeroed (shows $0.00, still visible) while the GLP
+ * sale or BOGO promo already discounts this cart - see discountsLocked in
+ * useCart.tsx. Keep in sync with VROUTER_ALT_PAYMENT_DISCOUNT_RATE in the
+ * valkyrie-router plugin, which is what actually enforces this server-side.
+ */
+export const ALT_PAYMENT_DISCOUNT_RATE = 5; // percent
+
 export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const SHIPPING_RATE = 9.95;
 

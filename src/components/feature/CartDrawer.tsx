@@ -306,6 +306,7 @@ export default function CartDrawer() {
                         name: bacWaterProduct.name,
                         price: bacWaterProduct.price,
                         image: bacWaterProduct.image,
+                        category: bacWaterProduct.category,
                       });
                     }}
                     className="w-full py-2.5 font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 cursor-pointer transition-all"

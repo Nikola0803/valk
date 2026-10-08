@@ -5,6 +5,7 @@ import HeroSection from "@/pages/home/components/HeroSection";
 import TrustBadges from "@/pages/home/components/TrustBadges";
 import GpSaleSection from "@/pages/home/components/GpSaleSection";
 import GlpSaleSection from "@/pages/home/components/GlpSaleSection";
+import BogoSaleSection from "@/pages/home/components/BogoSaleSection";
 import BestSellers from "@/pages/home/components/BestSellers";
 import FeatureCards from "@/pages/home/components/FeatureCards";
 import QualitySection from "@/pages/home/components/QualitySection";
@@ -42,6 +43,7 @@ export default function HomePage() {
           <TrustBadges />
           <GpSaleSection />
           <GlpSaleSection />
+          <BogoSaleSection />
           <BestSellers />
           <FeatureCards />
           <QualitySection />

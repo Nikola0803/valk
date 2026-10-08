@@ -8,6 +8,7 @@ import type { NormalizedProduct } from "@/lib/woocommerce";
 import ShopHero from "@/pages/shop/components/ShopHero";
 import GpSaleBanner from "@/pages/shop/components/GpSaleBanner";
 import GlpSaleBanner from "@/pages/shop/components/GlpSaleBanner";
+import BogoBanner from "@/pages/shop/components/BogoBanner";
 import ShopToolbar from "@/pages/shop/components/ShopToolbar";
 import ShopProductGrid from "@/pages/shop/components/ShopProductGrid";
 import ShopTrustStrip from "@/pages/shop/components/ShopTrustStrip";
@@ -26,7 +27,7 @@ export default function ShopPage() {
 
   const handleAdd = (product: NormalizedProduct) => {
     if (!product.inStock) return;
-    addItem({ id: product.id, slug: product.slug, name: product.name, price: product.price, image: product.image });
+    addItem({ id: product.id, slug: product.slug, name: product.name, price: product.price, image: product.image, category: product.category });
     setAdded(product.id);
     setTimeout(() => setAdded(null), 2000);
   };
@@ -59,6 +60,7 @@ export default function ShopPage() {
         <ShopHero />
         <GpSaleBanner />
         <GlpSaleBanner />
+        <BogoBanner />
         <ShopToolbar
           sort={sort}
           setSort={setSort}

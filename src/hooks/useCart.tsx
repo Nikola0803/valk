@@ -1,6 +1,8 @@
 import { createContext, useContext, useState, useCallback, useEffect, useRef, ReactNode } from "react";
 import type { WCCoupon } from "@/lib/woocommerce";
 import { trackAddToCart, trackRemoveFromCart } from "@/lib/analytics";
+import { isGlpSaleLive, isGlpSaleSlug } from "@/lib/sale";
+import { useBogoStatus, calcBogoDiscount } from "@/lib/bogo";
 
 const CART_STORAGE_KEY = "vk_cart_items";
 const COUPON_STORAGE_KEY = "vk_cart_coupon";
@@ -46,6 +48,10 @@ export interface CartItem {
   price: number;
   image: string;
   quantity: number;
+  // WooCommerce category (e.g. "Peptides") - powers the "Buy 2 Get 1 Free"
+  // promo eligibility check (see lib/bogo.ts). Optional so carts persisted
+  // before this field existed still load fine (treated as ineligible).
+  category?: string;
 }
 
 export interface AppliedCoupon {
@@ -65,6 +71,11 @@ interface CartContextValue {
   subtotal: number;
   discountAmount: number; // live-computed against current subtotal
   totalPrice: number;
+  /** "Buy 2 Get 1 Free" promo discount (see lib/bogo.ts) - 0 when the promo's off or this cart doesn't earn it. */
+  bogoDiscount: number;
+  bogoActive: boolean;
+  /** True when a coupon/alt-payment discount is zeroed because the GLP sale or BOGO already applies to this cart - see discountsLocked above. */
+  discountsLocked: boolean;
   appliedCoupon: AppliedCoupon | null;
   setCoupon: (c: AppliedCoupon | null) => void;
   isOpen: boolean;
@@ -163,9 +174,27 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const totalItems = items.reduce((sum, i) => sum + i.quantity, 0);
   const subtotal   = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
 
+  const bogoStatus = useBogoStatus();
+  const bogoActive = !!bogoStatus?.active;
+  const bogoDiscount = calcBogoDiscount(items, bogoActive);
+
+  // Whether a coupon/alt-payment discount can apply at all right now - a
+  // sale "cannot be stacked with coupons or any shit": the GP/GLP sale
+  // price (already baked into item.price) and BOGO's "3rd free" are each
+  // already a discount on their own, so once either actually applies to
+  // THIS cart, no coupon or the manual-payment discount can reduce price
+  // any further on top of it. A cart with no sale item and no BOGO-
+  // qualifying group still gets coupons/alt-payment normally, even while
+  // the GLP sale or BOGO promo is globally live elsewhere on the site.
+  // Affiliate coupons still fully apply (still tag/credit the affiliate)
+  // when nothing here is locked - they just can't add savings past
+  // whatever the sale/BOGO already gives once one of them kicks in.
+  const cartHasSaleItem = isGlpSaleLive() && items.some((i) => isGlpSaleSlug(i.slug));
+  const discountsLocked = bogoDiscount > 0 || cartHasSaleItem;
+
   // Live discount - recalculated every render against the current subtotal
-  const discountAmount = appliedCoupon ? calcLiveDiscount(appliedCoupon.coupon, subtotal) : 0;
-  const totalPrice = Math.max(0, subtotal - discountAmount);
+  const discountAmount = appliedCoupon && !discountsLocked ? calcLiveDiscount(appliedCoupon.coupon, subtotal) : 0;
+  const totalPrice = Math.max(0, subtotal - discountAmount - bogoDiscount);
 
   // Auto-apply GoAffPro affiliate coupon - runs whenever subtotal changes
   const goaffproApplied = useRef(false);
@@ -213,6 +242,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
         subtotal,
         discountAmount,
         totalPrice,
+        bogoDiscount,
+        bogoActive,
+        discountsLocked,
         appliedCoupon,
         setCoupon: setAppliedCoupon,
         isOpen,

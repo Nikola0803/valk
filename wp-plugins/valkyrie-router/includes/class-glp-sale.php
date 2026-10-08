@@ -172,4 +172,49 @@ class VROUTER_Glp_Sale {
 			'end'     => $end !== '' ? $end . ':00Z' : null,
 		];
 	}
+
+	/**
+	 * Authoritative "is the sale live right now" check, used by the coupon-
+	 * lock/alt-payment-lock enforcement below - NOT the same as the
+	 * frontend's isGlpSaleLive(), which also falls back to the
+	 * GLP_SALE_START/END dates baked into the React build when "auto" has no
+	 * dates set here. This server-side check has no access to those
+	 * frontend-only constants, so "auto" with blank dates is treated as NOT
+	 * active for enforcement purposes - set explicit Start/End dates on the
+	 * GLP Sale admin page (or Force ON) for the server-side lock to engage.
+	 */
+	public static function is_active(): bool {
+		$mode = self::get_mode();
+		if ( $mode === 'on' ) {
+			return true;
+		}
+		if ( $mode === 'off' ) {
+			return false;
+		}
+		$start = self::get_start();
+		$end   = self::get_end();
+		if ( $start === '' || $end === '' ) {
+			return false;
+		}
+		$now        = time();
+		$start_time = strtotime( $start . ':00Z' );
+		$end_time   = strtotime( $end . ':00Z' );
+		return $start_time !== false && $end_time !== false && $now >= $start_time && $now < $end_time;
+	}
+
+	const SLUG_PREFIXES = [ 'glp-1', 'glp-2', 'glp-3', 'cagril' ];
+
+	/** Mirrors isGlpSaleSlug() in src/lib/sale.ts - GLP-1/2/3 + Cagrilinitide, any dose/size. */
+	public static function product_qualifies( ?WC_Product $product ): bool {
+		if ( ! $product ) {
+			return false;
+		}
+		$slug = strtolower( (string) get_post_field( 'post_name', $product->get_id() ) );
+		foreach ( self::SLUG_PREFIXES as $prefix ) {
+			if ( str_starts_with( $slug, $prefix ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

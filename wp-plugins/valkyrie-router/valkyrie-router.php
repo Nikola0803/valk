@@ -26,6 +26,8 @@ function vrouter_require_includes() {
 		'includes/class-auth.php',
 		'includes/class-product-tools.php',
 		'includes/class-glp-sale.php',
+		'includes/class-bogo.php',
+		'includes/class-discount-lock.php',
 		// Valkyrie Peptides' own product-tab content, wired in purely via
 		// filters exposed by class-product-tools.php - delete this line (and
 		// the file it loads) to run the router without that site-specific
@@ -47,6 +49,8 @@ function vrouter_init_plugin() {
 	VROUTER_Auth::init();
 	VROUTER_Product_Tools::init();
 	VROUTER_Glp_Sale::init();
+	VROUTER_Bogo::init();
+	VROUTER_Discount_Lock::init();
 }
 add_action( 'plugins_loaded', 'vrouter_init_plugin', 1 );
 

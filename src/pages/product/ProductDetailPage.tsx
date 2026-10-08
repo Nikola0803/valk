@@ -118,6 +118,7 @@ export default function ProductDetailPage() {
         name: product.name,
         price: product.price,
         image: product.image,
+        category: product.category,
       },
       quantity
     );

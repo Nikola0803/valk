@@ -13,7 +13,7 @@ export default function BestSellers() {
   const bestSellers = products.filter((p) => p.inStock).slice(0, 4);
 
   const handleAdd = (product: NormalizedProduct) => {
-    addItem({ id: product.id, slug: product.slug, name: product.name, price: product.price, image: product.image });
+    addItem({ id: product.id, slug: product.slug, name: product.name, price: product.price, image: product.image, category: product.category });
     setAdded(product.id);
     setTimeout(() => setAdded(null), 2000);
   };
