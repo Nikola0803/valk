@@ -5,7 +5,8 @@ import { useProducts } from "@/hooks/useProducts";
 import { useCountdown } from "@/hooks/useCountdown";
 import { useGlpSalePercent } from "@/hooks/useGlpSalePercent";
 import { useGlpSaleMode } from "@/hooks/useGlpSaleMode";
-import { GLP_SALE_START, GLP_SALE_END, isGlpSaleSlug } from "@/lib/sale";
+import { useGlpSaleDates } from "@/hooks/useGlpSaleDates";
+import { isGlpSaleSlug } from "@/lib/sale";
 import type { NormalizedProduct } from "@/lib/woocommerce";
 
 function CountdownUnit({ value, label }: { value: number; label: string }) {
@@ -36,8 +37,9 @@ export default function GlpSaleSection() {
   const [added, setAdded] = useState<number | null>(null);
   const { addItem } = useCart();
   const { products, loading } = useProducts();
-  const startCountdown = useCountdown(GLP_SALE_START);
-  const endCountdown = useCountdown(GLP_SALE_END);
+  const { start, end } = useGlpSaleDates();
+  const startCountdown = useCountdown(start);
+  const endCountdown = useCountdown(end);
   const discountPercent = useGlpSalePercent();
   const saleMode = useGlpSaleMode();
 

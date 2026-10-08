@@ -1,18 +1,21 @@
 <?php
 /**
- * Admin on/off switch + discount override for the React app's GLP sale
- * (GLP-1/2/3 + Cagrilinitide line - see src/lib/sale.ts in the frontend
- * repo). The sale is date-driven by default (GLP_SALE_START/END baked into
- * the frontend build at build time), but that means flipping it on or off
- * needs a full rebuild + redeploy. This stores a runtime override as WP
- * options and exposes it over a public, read-only REST route the frontend
- * fetches on load - so the sale can be toggled from wp-admin with no
- * rebuild needed.
+ * Admin on/off switch + schedule + discount override for the React app's
+ * GLP sale (GLP-1/2/3 + Cagrilinitide line - see src/lib/sale.ts in the
+ * frontend repo). The sale's start/end dates and discount percent are
+ * baked into the frontend build by default (GLP_SALE_START/END/
+ * GLP_SALE_DISCOUNT_PERCENT), which means changing any of them needs a
+ * full rebuild + redeploy. This stores a runtime override as WP options
+ * and exposes it over a public, read-only REST route the frontend fetches
+ * on load - so the whole sale (on/off, when it starts/ends, and the
+ * percent) can be managed from wp-admin with no rebuild needed.
  *
  * Modes:
- *   auto - respect the frontend's own GLP_SALE_START/GLP_SALE_END dates (default)
- *   on   - force the sale live regardless of those dates
- *   off  - force the sale hidden regardless of those dates
+ *   auto - respect the start/end date fields below (falls back to the
+ *          frontend's own GLP_SALE_START/GLP_SALE_END if those are left
+ *          blank)
+ *   on   - force the sale live regardless of any dates
+ *   off  - force the sale hidden regardless of any dates
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,6 +26,8 @@ class VROUTER_Glp_Sale {
 
 	const OPTION_MODE    = 'vrouter_glp_sale_mode';
 	const OPTION_PERCENT = 'vrouter_glp_sale_percent';
+	const OPTION_START   = 'vrouter_glp_sale_start';
+	const OPTION_END     = 'vrouter_glp_sale_end';
 
 	public static function init() {
 		add_action( 'admin_menu', [ __CLASS__, 'add_menu' ] );
@@ -51,16 +56,34 @@ class VROUTER_Glp_Sale {
 		return ( $percent > 0 && $percent <= 100 ) ? $percent : 35;
 	}
 
+	/** Stored as "YYYY-MM-DDTHH:MM" (datetime-local's own format, treated as UTC) or '' if unset. */
+	private static function get_start() {
+		return (string) get_option( self::OPTION_START, '' );
+	}
+
+	private static function get_end() {
+		return (string) get_option( self::OPTION_END, '' );
+	}
+
+	private static function sanitize_datetime( $raw ) {
+		$raw = sanitize_text_field( wp_unslash( $raw ) );
+		// Expect exactly what <input type="datetime-local"> sends: YYYY-MM-DDTHH:MM
+		if ( $raw === '' || preg_match( '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/', $raw ) ) {
+			return $raw;
+		}
+		return '';
+	}
+
 	public static function render() {
 		$mode    = self::get_mode();
 		$percent = self::get_percent();
+		$start   = self::get_start();
+		$end     = self::get_end();
 		?>
 		<div class="wrap">
 			<h1>GLP Sale</h1>
 			<p class="description">Controls the GLP-1/2/3 + Cagrilinitide sale banner/countdown/discount
-				on the storefront. The sale's scheduled start/end dates live in the frontend code
-				(<code>src/lib/sale.ts</code>) and still need a rebuild to change - this page lets you
-				override the on/off state and discount percent instantly, with no rebuild or redeploy.</p>
+				on the storefront - no rebuild or redeploy needed for anything on this page.</p>
 
 			<?php if ( isset( $_GET['saved'] ) ) : ?>
 				<div class="notice notice-success is-dismissible"><p>Saved. The storefront picks this up the next time a page loads (no cache to clear).</p></div>
@@ -74,9 +97,23 @@ class VROUTER_Glp_Sale {
 					<tr>
 						<th scope="row">Sale status</th>
 						<td>
-							<label><input type="radio" name="mode" value="auto" <?php checked( $mode, 'auto' ); ?> /> Auto (follow the scheduled start/end dates)</label><br/>
-							<label><input type="radio" name="mode" value="on" <?php checked( $mode, 'on' ); ?> /> Force ON (always show the sale)</label><br/>
-							<label><input type="radio" name="mode" value="off" <?php checked( $mode, 'off' ); ?> /> Force OFF (always hide the sale)</label>
+							<label><input type="radio" name="mode" value="auto" <?php checked( $mode, 'auto' ); ?> /> Auto (follow the start/end dates below)</label><br/>
+							<label><input type="radio" name="mode" value="on" <?php checked( $mode, 'on' ); ?> /> Force ON (always show the sale, ignores the dates)</label><br/>
+							<label><input type="radio" name="mode" value="off" <?php checked( $mode, 'off' ); ?> /> Force OFF (always hide the sale, ignores the dates)</label>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">Starts</th>
+						<td>
+							<input type="datetime-local" name="start" value="<?php echo esc_attr( $start ); ?>" />
+							<p class="description">When "Auto" is selected, the countdown shows "Starts in" before this time and switches to the live sale once it passes. Leave blank to use the date built into the frontend code instead. <strong>Time is UTC</strong> - e.g. for midnight Mountain Time (MDT, UTC-6), enter 06:00.</p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">Ends</th>
+						<td>
+							<input type="datetime-local" name="end" value="<?php echo esc_attr( $end ); ?>" />
+							<p class="description">When "Auto" is selected, the sale (and its "Ends in" countdown) disappears once this time passes. Leave blank to use the date built into the frontend code instead. <strong>Time is UTC.</strong></p>
 						</td>
 					</tr>
 					<tr>
@@ -104,8 +141,13 @@ class VROUTER_Glp_Sale {
 		$percent = isset( $_POST['percent'] ) ? (int) $_POST['percent'] : 35;
 		$percent = max( 1, min( 100, $percent ) );
 
+		$start = isset( $_POST['start'] ) ? self::sanitize_datetime( $_POST['start'] ) : '';
+		$end   = isset( $_POST['end'] ) ? self::sanitize_datetime( $_POST['end'] ) : '';
+
 		update_option( self::OPTION_MODE, $mode );
 		update_option( self::OPTION_PERCENT, $percent );
+		update_option( self::OPTION_START, $start );
+		update_option( self::OPTION_END, $end );
 
 		wp_safe_redirect( add_query_arg( [ 'page' => 'valkyrie-glp-sale', 'saved' => '1' ], admin_url( 'admin.php' ) ) );
 		exit;
@@ -120,9 +162,14 @@ class VROUTER_Glp_Sale {
 	}
 
 	public static function get_config() {
+		$start = self::get_start();
+		$end   = self::get_end();
 		return [
 			'mode'    => self::get_mode(),
 			'percent' => self::get_percent(),
+			// ISO 8601 UTC, or null when left blank (frontend falls back to its own built-in date).
+			'start'   => $start !== '' ? $start . ':00Z' : null,
+			'end'     => $end !== '' ? $end . ':00Z' : null,
 		];
 	}
 }

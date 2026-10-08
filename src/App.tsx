@@ -6,6 +6,7 @@ import i18n from "./i18n";
 import { CartProvider } from "@/hooks/useCart";
 import AccessGate from "@/components/feature/AccessGate";
 import CouponToast from "@/components/feature/CouponToast";
+import CartPriceSync from "@/components/feature/CartPriceSync";
 
 const CANONICAL_BASE = "https://valkyriepeptides.com";
 
@@ -37,6 +38,7 @@ function App() {
     // <AccessGate>
       <I18nextProvider i18n={i18n}>
         <CartProvider>
+          <CartPriceSync />
           <BrowserRouter basename={__BASE_PATH__}>
             <ScrollToTop />
             <CanonicalUpdater />

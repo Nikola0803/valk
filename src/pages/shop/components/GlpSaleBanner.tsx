@@ -1,7 +1,7 @@
 import { useCountdown } from "@/hooks/useCountdown";
 import { useGlpSalePercent } from "@/hooks/useGlpSalePercent";
 import { useGlpSaleMode } from "@/hooks/useGlpSaleMode";
-import { GLP_SALE_START, GLP_SALE_END } from "@/lib/sale";
+import { useGlpSaleDates } from "@/hooks/useGlpSaleDates";
 
 function pad(n: number) {
   return String(n).padStart(2, "0");
@@ -14,8 +14,9 @@ function pad(n: number) {
  * GLP_SALE_END passes.
  */
 export default function GlpSaleBanner() {
-  const startCountdown = useCountdown(GLP_SALE_START);
-  const endCountdown = useCountdown(GLP_SALE_END);
+  const { start, end } = useGlpSaleDates();
+  const startCountdown = useCountdown(start);
+  const endCountdown = useCountdown(end);
   const discountPercent = useGlpSalePercent();
   const saleMode = useGlpSaleMode();
 

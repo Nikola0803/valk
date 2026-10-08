@@ -45,7 +45,14 @@ export function isGlpSaleSlug(slug: string): boolean {
  */
 export type GlpSaleMode = "auto" | "on" | "off";
 
-let glpSaleOverride: { mode: GlpSaleMode; percent: number } | null = null;
+interface GlpSaleOverride {
+  mode: GlpSaleMode;
+  percent: number;
+  start: Date | null; // null = use GLP_SALE_START below
+  end: Date | null;   // null = use GLP_SALE_END below
+}
+
+let glpSaleOverride: GlpSaleOverride | null = null;
 let glpSaleOverridePromise: Promise<void> | null = null;
 
 export function loadGlpSaleOverride(): Promise<void> {
@@ -56,11 +63,15 @@ export function loadGlpSaleOverride(): Promise<void> {
       if (!wcUrl) return;
       const res = await fetch(`${wcUrl}/wp-json/valkyrie/v1/glp-sale`);
       if (!res.ok) return;
-      const data = (await res.json()) as { mode?: string; percent?: number };
+      const data = (await res.json()) as { mode?: string; percent?: number; start?: string | null; end?: string | null };
       if (data.mode === "auto" || data.mode === "on" || data.mode === "off") {
+        const start = data.start ? new Date(data.start) : null;
+        const end = data.end ? new Date(data.end) : null;
         glpSaleOverride = {
           mode: data.mode,
           percent: typeof data.percent === "number" && data.percent > 0 ? data.percent : GLP_SALE_DISCOUNT_PERCENT,
+          start: start && !isNaN(start.getTime()) ? start : null,
+          end: end && !isNaN(end.getTime()) ? end : null,
         };
       }
     } catch {
@@ -74,10 +85,20 @@ export function loadGlpSaleOverride(): Promise<void> {
 // already resolved; falls back to the date-based schedule until it is.
 loadGlpSaleOverride();
 
+/** The sale's actual start - the wp-admin date if set, else the built-in GLP_SALE_START. */
+export function getGlpSaleStart(): Date {
+  return glpSaleOverride?.start ?? GLP_SALE_START;
+}
+
+/** The sale's actual end - the wp-admin date if set, else the built-in GLP_SALE_END. */
+export function getGlpSaleEnd(): Date {
+  return glpSaleOverride?.end ?? GLP_SALE_END;
+}
+
 export function isGlpSaleLive(now: Date = new Date()): boolean {
   if (glpSaleOverride?.mode === "on") return true;
   if (glpSaleOverride?.mode === "off") return false;
-  return now >= GLP_SALE_START && now < GLP_SALE_END;
+  return now >= getGlpSaleStart() && now < getGlpSaleEnd();
 }
 
 /** The live discount percent - the wp-admin override if set, else GLP_SALE_DISCOUNT_PERCENT. */

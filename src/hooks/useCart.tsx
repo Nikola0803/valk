@@ -59,6 +59,8 @@ interface CartContextValue {
   removeItem: (id: number) => void;
   updateQty: (id: number, qty: number) => void;
   clearCart: () => void;
+  /** Re-prices cart items already in the cart against current product prices - see CartPriceSync. */
+  syncPrices: (products: { id: number; price: number }[]) => void;
   totalItems: number;
   subtotal: number;
   discountAmount: number; // live-computed against current subtotal
@@ -128,6 +130,31 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  /**
+   * Re-prices items already sitting in the cart against current product
+   * prices. Cart items freeze their price at add-to-cart time (see addItem
+   * above) and persist indefinitely in localStorage - if a sale toggles
+   * on/off or a schedule starts/ends while an item is already in someone's
+   * cart, that frozen price goes stale (shop/product pages always show the
+   * live price since they fetch fresh, but the cart/checkout kept showing
+   * whatever price was current when it was added). Called from
+   * CartPriceSync whenever the live product catalog loads.
+   */
+  const syncPrices = useCallback((products: { id: number; price: number }[]) => {
+    setItems((prev) => {
+      let changed = false;
+      const next = prev.map((item) => {
+        const live = products.find((p) => p.id === item.id);
+        if (live && live.price !== item.price) {
+          changed = true;
+          return { ...item, price: live.price };
+        }
+        return item;
+      });
+      return changed ? next : prev;
+    });
+  }, []);
+
   const clearCart = useCallback(() => {
     setItems([]);
     setAppliedCoupon(null);
@@ -181,6 +208,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         removeItem,
         updateQty,
         clearCart,
+        syncPrices,
         totalItems,
         subtotal,
         discountAmount,
