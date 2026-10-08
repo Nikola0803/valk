@@ -1,6 +1,6 @@
 import { useNavigate, type NavigateFunction } from "react-router-dom";
 import { useRoutes } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import routes from "./config";
 
 let navigateResolver: (navigate: ReturnType<typeof useNavigate>) => void;
@@ -22,5 +22,8 @@ export function AppRoutes() {
     window.REACT_APP_NAVIGATE = navigate;
     navigateResolver(window.REACT_APP_NAVIGATE);
   });
-  return element;
+  // Routes other than Home are React.lazy()-loaded (see config.tsx) -
+  // Suspense shows this fallback for the brief moment a route's chunk is
+  // still downloading, instead of the page going blank.
+  return <Suspense fallback={null}>{element}</Suspense>;
 }
