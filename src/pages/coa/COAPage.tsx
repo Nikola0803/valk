@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import Navbar from "@/components/feature/Navbar";
 import FooterSection from "@/pages/home/components/FooterSection";
-import { coaEntries as fallbackCoaEntries, coaCategories, fetchCOALibrary, type COAEntry } from "@/pages/coa/coaData";
+import { coaEntries as fallbackCoaEntries, coaCategories, fetchCOALibrary, sortCoaEntriesByDateDesc, type COAEntry } from "@/pages/coa/coaData";
 import COAHero from "@/pages/coa/components/COAHero";
 import COAStats from "@/pages/coa/components/COAStats";
 import COAFilters from "@/pages/coa/components/COAFilters";
@@ -23,10 +23,10 @@ export default function COAPage() {
   // Starts with the bundled fallback so the page never renders empty, then
   // swaps in the live, admin-editable library the moment it loads - see
   // fetchCOALibrary() in coaData.ts.
-  const [coaEntries, setCoaEntries] = useState<COAEntry[]>(fallbackCoaEntries);
+  const [coaEntries, setCoaEntries] = useState<COAEntry[]>(() => sortCoaEntriesByDateDesc(fallbackCoaEntries));
 
   useEffect(() => {
-    fetchCOALibrary().then(setCoaEntries);
+    fetchCOALibrary().then((entries) => setCoaEntries(sortCoaEntriesByDateDesc(entries)));
   }, []);
 
   const openDoc = (url: string, title: string) => {

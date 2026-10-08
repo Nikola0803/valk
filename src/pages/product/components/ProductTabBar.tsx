@@ -9,11 +9,13 @@ interface ProductTabBarProps {
   activeTab: TabKey;
   setActiveTab: (tab: TabKey) => void;
   reviews: WCReview[];
+  /** COA docs from the live wp-admin library (Valkyrie CMS -> COA Files), keyed by slug - fallback for products added after the static CSV import. */
+  liveCoaImages?: string[];
 }
 
-export default function ProductTabBar({ product, activeTab, setActiveTab, reviews }: ProductTabBarProps) {
+export default function ProductTabBar({ product, activeTab, setActiveTab, reviews, liveCoaImages }: ProductTabBarProps) {
   const staticTab = staticTabData[product.id];
-  const coaImages = product.coaImages?.length ? product.coaImages : (staticTab?.coa ?? []);
+  const coaImages = product.coaImages?.length ? product.coaImages : (staticTab?.coa?.length ? staticTab.coa : (liveCoaImages ?? []));
   const addInfo   = product.additionalInfo    ? product.additionalInfo : (staticTab?.additionalInfo ?? "");
 
   const tabs: { key: TabKey; label: string }[] = [

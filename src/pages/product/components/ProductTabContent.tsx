@@ -19,6 +19,8 @@ interface ProductTabContentProps {
   setReviewSubmitted: (v: boolean) => void;
   handleReviewSubmit: () => void;
   setLightboxImg: (url: string) => void;
+  /** COA docs from the live wp-admin library (Valkyrie CMS -> COA Files), keyed by slug - fallback for products added after the static CSV import. */
+  liveCoaImages?: string[];
 }
 
 export default function ProductTabContent({
@@ -26,10 +28,10 @@ export default function ProductTabContent({
   reviews, reviewsLoading,
   reviewForm, reviewHover, reviewSubmitting, reviewSubmitted, reviewError,
   setReviewForm, setReviewHover, setReviewSubmitted, handleReviewSubmit,
-  setLightboxImg,
+  setLightboxImg, liveCoaImages,
 }: ProductTabContentProps) {
   const staticTab  = staticTabData[product.id];
-  const coaImages  = product.coaImages?.length ? product.coaImages : (staticTab?.coa ?? []);
+  const coaImages  = product.coaImages?.length ? product.coaImages : (staticTab?.coa?.length ? staticTab.coa : (liveCoaImages ?? []));
   const addInfo    = product.additionalInfo    ? product.additionalInfo : (staticTab?.additionalInfo ?? "");
 
   return (
