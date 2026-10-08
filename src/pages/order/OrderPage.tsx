@@ -238,7 +238,15 @@ export default function OrderPage() {
         address_1: form.address, city: form.city,
         state: form.state, postcode: form.zip, country: "US",
       },
-      line_items: items.map((item) => ({ product_id: item.id, quantity: item.quantity, name: item.name })),
+      // subtotal/total pinned explicitly to the cart's already-discounted
+      // item price - without this, WooCommerce prices the order off each
+      // product's own regular price server-side, silently ignoring any
+      // client-side sale discount (GLP sale, etc.) and charging full price
+      // regardless of what the checkout UI displayed.
+      line_items: items.map((item) => {
+        const lineTotal = (item.price * item.quantity).toFixed(2);
+        return { product_id: item.id, quantity: item.quantity, name: item.name, subtotal: lineTotal, total: lineTotal };
+      }),
       coupon_lines: appliedCoupon ? [{ code: appliedCoupon.coupon.code }] : undefined,
       shipping_lines: [{ method_title: "Flat Rate", method_id: "flat_rate", total: SHIPPING_RATE.toFixed(2) }],
       customer_note: form.notes || undefined,
