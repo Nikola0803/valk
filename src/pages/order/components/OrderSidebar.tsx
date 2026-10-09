@@ -1,6 +1,5 @@
 import { SHIPPING_RATE, ALT_PAYMENT_DISCOUNT_RATE } from "@/pages/order/orderData";
 import type { CartItem, AppliedCoupon } from "@/hooks/useCart";
-import FreeShippingBar from "@/components/feature/FreeShippingBar";
 
 interface OrderSidebarProps {
   items: CartItem[];
@@ -34,11 +33,6 @@ export default function OrderSidebar({
 }: OrderSidebarProps) {
   return (
     <div className="sticky top-24 flex flex-col gap-4">
-
-      {/* Free shipping progress */}
-      <div className="p-5" style={{ background: "#fff", border: "1px solid #e0e0e0" }}>
-        <FreeShippingBar subtotal={subtotal} />
-      </div>
 
       {/* Coupon input */}
       <div style={{ background: "#fff", border: "1px solid #e0e0e0" }}>

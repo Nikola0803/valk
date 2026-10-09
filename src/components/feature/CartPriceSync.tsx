@@ -15,7 +15,7 @@ export default function CartPriceSync() {
 
   useEffect(() => {
     if (loading || products.length === 0) return;
-    syncPrices(products.map((p) => ({ id: p.id, price: p.price })));
+    syncPrices(products.map((p) => ({ id: p.id, price: p.price, originalPrice: p.originalPrice, onSale: p.onSale })));
   }, [products, loading, syncPrices]);
 
   return null;

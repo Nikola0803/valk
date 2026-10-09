@@ -39,7 +39,7 @@ export default function GpSaleSection() {
   const saleItems = products.filter((p) => p.featured && p.onSale);
 
   const handleAdd = (product: NormalizedProduct) => {
-    addItem({ id: product.id, slug: product.slug, name: product.name, price: product.price, image: product.image, category: product.category });
+    addItem({ id: product.id, slug: product.slug, name: product.name, price: product.price, image: product.image, category: product.category, originalPrice: product.originalPrice, onSale: product.onSale });
     setAdded(product.id);
     setTimeout(() => setAdded(null), 2000);
   };

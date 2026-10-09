@@ -34,16 +34,37 @@ class VROUTER_Discount_Lock {
 		add_action( 'woocommerce_rest_insert_shop_order_object', [ __CLASS__, 'neutralize_coupon_during_lock' ], 20, 3 );
 	}
 
-	/** True once this order actually benefits from the GLP sale or BOGO (not just "a sale is running somewhere"). */
+	/**
+	 * True once this order actually benefits from the GLP sale, BOGO, OR any
+	 * plain WooCommerce on-sale product (regular_price > sale_price set
+	 * directly on the product in wp-admin - e.g. the older GP line, which is
+	 * NOT on the GLP_Sale prefix list at all). Checking the product's own
+	 * regular vs. current price, instead of only recognizing the GLP sale by
+	 * slug prefix, is what actually makes this "nothing stacks on top of any
+	 * live discount" rather than "nothing stacks on top of THIS ONE sale
+	 * mechanism" - a GP-3 order with a 20% coupon previously sailed straight
+	 * through this check because "gp-3" never matched the glp-1/2/3/cagril
+	 * prefixes, so the coupon applied in full on top of GP-3's own sale
+	 * price with zero enforcement.
+	 */
 	private static function order_is_locked( WC_Order $order ): bool {
 		if ( class_exists( 'VROUTER_Bogo' ) && VROUTER_Bogo::is_active() && VROUTER_Bogo::calc_order_discount( $order ) > 0 ) {
 			return true;
 		}
-		if ( class_exists( 'VROUTER_Glp_Sale' ) && VROUTER_Glp_Sale::is_active() ) {
-			foreach ( $order->get_items( 'line_item' ) as $item ) {
-				if ( VROUTER_Glp_Sale::product_qualifies( $item->get_product() ) ) {
-					return true;
-				}
+		$glp_active = class_exists( 'VROUTER_Glp_Sale' ) && VROUTER_Glp_Sale::is_active();
+		foreach ( $order->get_items( 'line_item' ) as $item ) {
+			$product = $item->get_product();
+			if ( ! $product ) {
+				continue;
+			}
+			if ( $glp_active && VROUTER_Glp_Sale::product_qualifies( $product ) ) {
+				return true;
+			}
+			$regular_price = (float) $product->get_regular_price();
+			$qty           = max( 1, (int) $item->get_quantity() );
+			$unit_total    = (float) $item->get_subtotal() / $qty; // pre-coupon per-unit price, so a coupon itself never falsely triggers this
+			if ( $regular_price > 0 && $unit_total < $regular_price - 0.004 ) {
+				return true;
 			}
 		}
 		return false;

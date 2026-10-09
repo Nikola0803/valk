@@ -52,6 +52,12 @@ export interface CartItem {
   // promo eligibility check (see lib/bogo.ts). Optional so carts persisted
   // before this field existed still load fine (treated as ineligible).
   category?: string;
+  // Regular (non-sale) price and native WooCommerce on-sale flag - powers
+  // the coupon-stacking lock below for ANY discounted product, not just the
+  // GLP line (see cartHasSaleItem). Optional so carts persisted before this
+  // field existed still load fine (treated as not-on-sale).
+  originalPrice?: number;
+  onSale?: boolean;
 }
 
 export interface AppliedCoupon {
@@ -151,14 +157,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
    * whatever price was current when it was added). Called from
    * CartPriceSync whenever the live product catalog loads.
    */
-  const syncPrices = useCallback((products: { id: number; price: number }[]) => {
+  const syncPrices = useCallback((products: { id: number; price: number; originalPrice?: number; onSale?: boolean }[]) => {
     setItems((prev) => {
       let changed = false;
       const next = prev.map((item) => {
         const live = products.find((p) => p.id === item.id);
-        if (live && live.price !== item.price) {
+        if (live && (live.price !== item.price || live.originalPrice !== item.originalPrice || live.onSale !== item.onSale)) {
           changed = true;
-          return { ...item, price: live.price };
+          return { ...item, price: live.price, originalPrice: live.originalPrice, onSale: live.onSale };
         }
         return item;
       });
@@ -189,7 +195,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
   // Affiliate coupons still fully apply (still tag/credit the affiliate)
   // when nothing here is locked - they just can't add savings past
   // whatever the sale/BOGO already gives once one of them kicks in.
-  const cartHasSaleItem = isGlpSaleLive() && items.some((i) => isGlpSaleSlug(i.slug));
+  // Generic check - ANY item actually priced below its regular price is "on
+  // sale" and locks the cart, not just the GLP line. This is what GP-3 (the
+  // older line, discounted via a plain WooCommerce on_sale/sale_price set in
+  // wp-admin - see GpSaleSection.tsx's `p.featured && p.onSale` filter) was
+  // missing before: isGlpSaleSlug() only ever matched glp-1/2/3/cagril
+  // slugs, so a GP-series sale item slipped straight through this lock with
+  // zero protection and a coupon stacked on top of it for free.
+  const cartHasDiscountedItem = items.some(
+    (i) => i.onSale || (i.originalPrice != null && i.price < i.originalPrice - 0.004)
+  );
+  const cartHasSaleItem = (isGlpSaleLive() && items.some((i) => isGlpSaleSlug(i.slug))) || cartHasDiscountedItem;
   const discountsLocked = bogoDiscount > 0 || cartHasSaleItem;
 
   // Live discount - recalculated every render against the current subtotal

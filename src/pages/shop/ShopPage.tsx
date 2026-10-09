@@ -27,7 +27,7 @@ export default function ShopPage() {
 
   const handleAdd = (product: NormalizedProduct) => {
     if (!product.inStock) return;
-    addItem({ id: product.id, slug: product.slug, name: product.name, price: product.price, image: product.image, category: product.category });
+    addItem({ id: product.id, slug: product.slug, name: product.name, price: product.price, image: product.image, category: product.category, originalPrice: product.originalPrice, onSale: product.onSale });
     setAdded(product.id);
     setTimeout(() => setAdded(null), 2000);
   };
