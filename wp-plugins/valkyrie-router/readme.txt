@@ -2,7 +2,7 @@
 Contributors: valkyrieresearch
 Requires at least: 6.0
 Requires PHP: 8.0
-Version: 2.0.0
+Version: 2.2.0
 License: GPLv2 or later
 
 Serves the built React/Vite storefront as this WordPress site's actual
@@ -107,6 +107,29 @@ along.
 
 Re-upload a new zip any time - it replaces the old build immediately with
 no need to toggle takeover off and back on.
+
+== Changelog ==
+
+= 2.2.0 =
+* Fix: the customer "on-hold" order email showed a different total than
+  what the order was actually charged. WooCommerce fires that email
+  during the order's initial save, which happens BEFORE any of
+  class-discount-lock.php's fee/coupon corrections (BOGO, alt-payment
+  discount, coupon lock) run - so the email always showed the
+  pre-correction number while the real saved order showed the
+  post-correction one. Orders are now created quietly as "pending"
+  (same as native WooCommerce checkout) and only transitioned to their
+  real status - which is what actually fires the email - after every
+  correction has run and totals are final.
+
+= 2.1.0 =
+* Fix: coupon-stacking lock (class-discount-lock.php) only recognized the
+  GLP-1/2/3/Cagrilinitide product line by slug prefix - any other on-sale
+  product (e.g. the GP line, discounted via a plain WooCommerce
+  regular_price/sale_price set in wp-admin) was never locked, so a coupon
+  could still fully stack on top of its sale price with zero enforcement.
+  Now locks on ANY line item priced below its own WooCommerce regular
+  price, not just GLP-prefixed slugs.
 
 == Where this plugin came from ==
 

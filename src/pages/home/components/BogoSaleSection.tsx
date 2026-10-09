@@ -3,8 +3,10 @@ import { Link } from "react-router-dom";
 import { useCart } from "@/hooks/useCart";
 import { useProducts } from "@/hooks/useProducts";
 import { useCountdown } from "@/hooks/useCountdown";
-import { GP_SALE_END, GP_SALE_DISCOUNT_PERCENT } from "@/lib/sale";
+import { useBogoStatus, BOGO_CATEGORY } from "@/lib/bogo";
 import type { NormalizedProduct } from "@/lib/woocommerce";
+
+const HOMEPAGE_DISPLAY_LIMIT = 6;
 
 function CountdownUnit({ value, label }: { value: number; label: string }) {
   return (
@@ -18,25 +20,27 @@ function CountdownUnit({ value, label }: { value: number; label: string }) {
 }
 
 /**
- * The GP line sale (formerly GLP-1/2/3, now GP-1/2/3 + Cagrilinitide) - the 6
- * WooCommerce-"Featured" products, whichever they are at any given time (the
- * merchant toggles Featured in wp-admin, this section just reflects it).
- * Renders nothing once GP_SALE_END passes or if fewer than 1 featured product
- * is on sale - no stale "expired sale" banner left on the homepage.
+ * The homepage's "Buy 2 Get 1 Free" promo section - a separate, standalone
+ * deal from the GLP sale (see lib/sale.ts) run alongside it. Not gated on
+ * any product's on_sale flag - BOGO applies to every qualifying (Peptides)
+ * product at its normal price, the deal is in the quantity, not a price
+ * cut - so every in-stock Peptides product is eligible to show here.
  *
- * Styling mirrors BestSellers.tsx (light background, white cards, product
- * images on a light #f0ede8 tile) - product photos use mix-blend-mode:
- * multiply to drop their white background into the page, which only reads
- * correctly against a LIGHT tile. Putting these on a dark card renders them
- * as near-black blobs - don't reintroduce a dark theme here.
+ * Driven entirely by the admin-controlled promo status (see lib/bogo.ts) -
+ * renders nothing whenever it's off/outside its scheduled window, no
+ * hardcoded dates to keep in sync.
  */
-export default function GpSaleSection() {
+export default function BogoSaleSection() {
   const [added, setAdded] = useState<number | null>(null);
   const { addItem } = useCart();
   const { products, loading } = useProducts();
-  const countdown = useCountdown(GP_SALE_END);
+  const bogoStatus = useBogoStatus();
 
-  const saleItems = products.filter((p) => p.featured && p.onSale);
+  const end = bogoStatus?.end ? new Date(bogoStatus.end) : null;
+  const countdown = useCountdown(end ?? new Date());
+
+  const allEligible = products.filter((p) => p.category === BOGO_CATEGORY && p.inStock);
+  const eligible = allEligible.slice(0, HOMEPAGE_DISPLAY_LIMIT);
 
   const handleAdd = (product: NormalizedProduct) => {
     addItem({ id: product.id, slug: product.slug, name: product.name, price: product.price, image: product.image, category: product.category, originalPrice: product.originalPrice, onSale: product.onSale });
@@ -44,8 +48,8 @@ export default function GpSaleSection() {
     setTimeout(() => setAdded(null), 2000);
   };
 
-  if (countdown.expired) return null;
-  if (!loading && saleItems.length === 0) return null;
+  if (!bogoStatus?.active || !end || countdown.expired) return null;
+  if (!loading && eligible.length === 0) return null;
 
   return (
     <section style={{ background: "#f8f7f5" }} className="py-24 md:py-28 px-8">
@@ -58,16 +62,16 @@ export default function GpSaleSection() {
               Limited Time
             </span>
             <h2 className="font-black uppercase leading-[0.88] tracking-tight" style={{ fontSize: "clamp(36px, 5vw, 64px)", background: "linear-gradient(135deg, #888 0%, #c0c0c0 35%, #666 60%, #aaa 80%, #777 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-              {GP_SALE_DISCOUNT_PERCENT}% OFF<br />
-              <span style={{ background: "linear-gradient(135deg, #777 0%, #b0b0b0 30%, #555 55%, #999 75%, #666 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", fontFamily: "'Oswald', sans-serif", fontWeight: 700 }}>THE GP LINE</span>
+              BUY 2 GET 1<br />
+              <span style={{ background: "linear-gradient(135deg, #777 0%, #b0b0b0 30%, #555 55%, #999 75%, #666 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", fontFamily: "'Oswald', sans-serif", fontWeight: 700 }}>FREE</span>
             </h2>
             <p className="text-[#888] text-sm leading-relaxed mt-4 max-w-sm">
-              GP-1, GP-2, GP-3, and Cagrilinitide — for a limited time only.
+              Buy 2 of the same peptide, get the 3rd FREE — every peptide qualifies, for a limited time only.
             </p>
           </div>
 
           <div className="flex flex-col items-start lg:items-end gap-3">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-[#aaa]">Sale ends in</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#aaa]">Deal ends in</span>
             <div className="flex items-center gap-4 md:gap-6">
               <CountdownUnit value={countdown.days} label="Days" />
               <span className="text-[#ddd] text-2xl font-black -mt-4">:</span>
@@ -98,7 +102,7 @@ export default function GpSaleSection() {
         {/* Product grid */}
         {!loading && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px" style={{ background: "#e0e0e0" }} data-product-shop>
-          {saleItems.map((product) => (
+          {eligible.map((product) => (
             <div
               key={product.id}
               className="group flex flex-col bg-white transition-all duration-300"
@@ -107,14 +111,14 @@ export default function GpSaleSection() {
             >
               <Link to={`/products/${product.slug}`} className="relative overflow-hidden block" style={{ background: "#f0ede8", height: 300 }}>
                 <div className="absolute top-4 left-4 z-10">
-                  <span className="text-[9px] font-black uppercase tracking-widest px-3 py-1.5" style={{ background: "#dc2626", color: "#fff" }}>
-                    {GP_SALE_DISCOUNT_PERCENT}% Off
+                  <span className="text-[9px] font-black uppercase tracking-widest px-3 py-1.5 flex items-center gap-1" style={{ background: "#dc2626", color: "#fff" }}>
+                    <i className="ri-gift-line"></i> Buy 2 Get 1 Free
                   </span>
                 </div>
                 <img
                   src={product.image}
                   alt={product.name}
-                  className="w-full h-full object-contain object-center group-hover:scale-105 transition-transform duration-700 p-6"
+                  className="w-full h-full object-contain object-center group-hover:scale-105 transition-transform duration-700"
                   style={{ mixBlendMode: "multiply" }}
                 />
               </Link>
@@ -134,7 +138,7 @@ export default function GpSaleSection() {
 
                 <div className="flex items-center gap-2 mb-5">
                   <span className="text-[#111111] font-black text-2xl">${product.price.toFixed(2)}</span>
-                  <span className="text-[#bbb] text-sm line-through">${product.originalPrice.toFixed(2)}</span>
+                  <span className="text-[#888] text-xs font-semibold">buy 3, pay for 2</span>
                 </div>
 
                 <button
@@ -151,6 +155,23 @@ export default function GpSaleSection() {
             </div>
           ))}
         </div>
+        )}
+
+        {!loading && allEligible.length > HOMEPAGE_DISPLAY_LIMIT && (
+          <div className="mt-10 text-center">
+            <Link
+              to="/shop"
+              className="inline-flex items-center gap-3 font-black uppercase tracking-widest text-xs cursor-pointer whitespace-nowrap transition-all duration-200"
+              style={{ background: "#111111", color: "#ffffff", padding: "15px 32px" }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "#333"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "#111111"; }}
+            >
+              Shop All {allEligible.length} Deals
+              <div className="w-4 h-4 flex items-center justify-center">
+                <i className="ri-arrow-right-line"></i>
+              </div>
+            </Link>
+          </div>
         )}
       </div>
     </section>

@@ -1,6 +1,8 @@
 import { createContext, useContext, useState, useCallback, useEffect, useRef, ReactNode } from "react";
 import type { WCCoupon } from "@/lib/woocommerce";
 import { trackAddToCart, trackRemoveFromCart } from "@/lib/analytics";
+import { isGlpSaleLive, isGlpSaleSlug } from "@/lib/sale";
+import { useBogoStatus, calcBogoDiscount } from "@/lib/bogo";
 
 const CART_STORAGE_KEY = "vk_cart_items";
 const COUPON_STORAGE_KEY = "vk_cart_coupon";
@@ -46,6 +48,16 @@ export interface CartItem {
   price: number;
   image: string;
   quantity: number;
+  // WooCommerce category (e.g. "Peptides") - powers the "Buy 2 Get 1 Free"
+  // promo eligibility check (see lib/bogo.ts). Optional so carts persisted
+  // before this field existed still load fine (treated as ineligible).
+  category?: string;
+  // Regular (non-sale) price and native WooCommerce on-sale flag - powers
+  // the coupon-stacking lock below for ANY discounted product, not just the
+  // GLP line (see cartHasSaleItem). Optional so carts persisted before this
+  // field existed still load fine (treated as not-on-sale).
+  originalPrice?: number;
+  onSale?: boolean;
 }
 
 export interface AppliedCoupon {
@@ -59,10 +71,17 @@ interface CartContextValue {
   removeItem: (id: number) => void;
   updateQty: (id: number, qty: number) => void;
   clearCart: () => void;
+  /** Re-prices cart items already in the cart against current product prices - see CartPriceSync. */
+  syncPrices: (products: { id: number; price: number }[]) => void;
   totalItems: number;
   subtotal: number;
   discountAmount: number; // live-computed against current subtotal
   totalPrice: number;
+  /** "Buy 2 Get 1 Free" promo discount (see lib/bogo.ts) - 0 when the promo's off or this cart doesn't earn it. */
+  bogoDiscount: number;
+  bogoActive: boolean;
+  /** True when a coupon/alt-payment discount is zeroed because the GLP sale or BOGO already applies to this cart - see discountsLocked above. */
+  discountsLocked: boolean;
   appliedCoupon: AppliedCoupon | null;
   setCoupon: (c: AppliedCoupon | null) => void;
   isOpen: boolean;
@@ -128,6 +147,31 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  /**
+   * Re-prices items already sitting in the cart against current product
+   * prices. Cart items freeze their price at add-to-cart time (see addItem
+   * above) and persist indefinitely in localStorage - if a sale toggles
+   * on/off or a schedule starts/ends while an item is already in someone's
+   * cart, that frozen price goes stale (shop/product pages always show the
+   * live price since they fetch fresh, but the cart/checkout kept showing
+   * whatever price was current when it was added). Called from
+   * CartPriceSync whenever the live product catalog loads.
+   */
+  const syncPrices = useCallback((products: { id: number; price: number; originalPrice?: number; onSale?: boolean }[]) => {
+    setItems((prev) => {
+      let changed = false;
+      const next = prev.map((item) => {
+        const live = products.find((p) => p.id === item.id);
+        if (live && (live.price !== item.price || live.originalPrice !== item.originalPrice || live.onSale !== item.onSale)) {
+          changed = true;
+          return { ...item, price: live.price, originalPrice: live.originalPrice, onSale: live.onSale };
+        }
+        return item;
+      });
+      return changed ? next : prev;
+    });
+  }, []);
+
   const clearCart = useCallback(() => {
     setItems([]);
     setAppliedCoupon(null);
@@ -136,9 +180,37 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const totalItems = items.reduce((sum, i) => sum + i.quantity, 0);
   const subtotal   = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
 
+  const bogoStatus = useBogoStatus();
+  const bogoActive = !!bogoStatus?.active;
+  const bogoDiscount = calcBogoDiscount(items, bogoActive);
+
+  // Whether a coupon/alt-payment discount can apply at all right now - a
+  // sale "cannot be stacked with coupons or any shit": the GP/GLP sale
+  // price (already baked into item.price) and BOGO's "3rd free" are each
+  // already a discount on their own, so once either actually applies to
+  // THIS cart, no coupon or the manual-payment discount can reduce price
+  // any further on top of it. A cart with no sale item and no BOGO-
+  // qualifying group still gets coupons/alt-payment normally, even while
+  // the GLP sale or BOGO promo is globally live elsewhere on the site.
+  // Affiliate coupons still fully apply (still tag/credit the affiliate)
+  // when nothing here is locked - they just can't add savings past
+  // whatever the sale/BOGO already gives once one of them kicks in.
+  // Generic check - ANY item actually priced below its regular price is "on
+  // sale" and locks the cart, not just the GLP line. This is what GP-3 (the
+  // older line, discounted via a plain WooCommerce on_sale/sale_price set in
+  // wp-admin - see GpSaleSection.tsx's `p.featured && p.onSale` filter) was
+  // missing before: isGlpSaleSlug() only ever matched glp-1/2/3/cagril
+  // slugs, so a GP-series sale item slipped straight through this lock with
+  // zero protection and a coupon stacked on top of it for free.
+  const cartHasDiscountedItem = items.some(
+    (i) => i.onSale || (i.originalPrice != null && i.price < i.originalPrice - 0.004)
+  );
+  const cartHasSaleItem = (isGlpSaleLive() && items.some((i) => isGlpSaleSlug(i.slug))) || cartHasDiscountedItem;
+  const discountsLocked = bogoDiscount > 0 || cartHasSaleItem;
+
   // Live discount - recalculated every render against the current subtotal
-  const discountAmount = appliedCoupon ? calcLiveDiscount(appliedCoupon.coupon, subtotal) : 0;
-  const totalPrice = Math.max(0, subtotal - discountAmount);
+  const discountAmount = appliedCoupon && !discountsLocked ? calcLiveDiscount(appliedCoupon.coupon, subtotal) : 0;
+  const totalPrice = Math.max(0, subtotal - discountAmount - bogoDiscount);
 
   // Auto-apply GoAffPro affiliate coupon - runs whenever subtotal changes
   const goaffproApplied = useRef(false);
@@ -181,10 +253,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
         removeItem,
         updateQty,
         clearCart,
+        syncPrices,
         totalItems,
         subtotal,
         discountAmount,
         totalPrice,
+        bogoDiscount,
+        bogoActive,
+        discountsLocked,
         appliedCoupon,
         setCoupon: setAppliedCoupon,
         isOpen,

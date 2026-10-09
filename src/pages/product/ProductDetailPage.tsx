@@ -11,6 +11,9 @@ import ProductPurchasePanel from "@/pages/product/components/ProductPurchasePane
 import ProductFAQSection from "@/pages/product/components/ProductFAQSection";
 import ProductTabBar, { type TabKey } from "@/pages/product/components/ProductTabBar";
 import ProductTabContent from "@/pages/product/components/ProductTabContent";
+import { trackViewItem } from "@/lib/analytics";
+import { useCoaEntry } from "@/hooks/useCoaEntry";
+import { coaEntryDocUrls } from "@/pages/coa/coaData";
 
 // Variant groups - simple products that are size variants of each other.
 // Key = base slug (no size suffix), value = ordered array of slugs by size.
@@ -45,6 +48,13 @@ export default function ProductDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const { addItem } = useCart();
   const variantGroup = getVariantGroup(slug ?? "");
+
+  // Live admin-editable COA (wp-admin -> Valkyrie CMS -> COA Files) for this
+  // slug - used as a fallback when neither WooCommerce product meta nor the
+  // one-time static CSV import (src/data/productTabs.ts) has this product's
+  // COA, which is exactly the case for anything added after that import.
+  const liveCoaEntry = useCoaEntry(slug);
+  const liveCoaImages = coaEntryDocUrls(liveCoaEntry);
 
   // Stable viewer count for this page load - seeded from slug + time window
   const [viewerCount] = useState(() => getViewerCount(slug ?? ""));
@@ -84,6 +94,7 @@ export default function ProductDetailPage() {
         } else {
           const normalized = normalizeProduct(wc);
           setProduct(normalized);
+          trackViewItem(normalized);
           // Fetch real WooCommerce reviews for this product
           setReviewsLoading(true);
           getProductReviews(wc.id)
@@ -107,6 +118,9 @@ export default function ProductDetailPage() {
         name: product.name,
         price: product.price,
         image: product.image,
+        category: product.category,
+        originalPrice: product.originalPrice,
+        onSale: product.onSale,
       },
       quantity
     );
@@ -228,10 +242,11 @@ export default function ProductDetailPage() {
           </div>
         </section>
 
-        <ProductTabBar product={product} activeTab={activeTab} setActiveTab={setActiveTab} reviews={reviews} />
+        <ProductTabBar product={product} activeTab={activeTab} setActiveTab={setActiveTab} reviews={reviews} liveCoaImages={liveCoaImages} />
         <ProductTabContent
           product={product}
           slug={slug ?? ""}
+          liveCoaImages={liveCoaImages}
           activeTab={activeTab}
           reviews={reviews}
           reviewsLoading={reviewsLoading}

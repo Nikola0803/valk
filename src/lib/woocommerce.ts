@@ -1,11 +1,13 @@
 /**
- * WooCommerce REST API client for Warrior Distributions
+ * WooCommerce REST API client for Valkyrie Peptides
  *
  * Keys live in .env:
  *   VITE_WC_URL          = https://your-wp-site.com
  *   VITE_WC_KEY          = ck_...
  *   VITE_WC_SECRET       = cs_...
  */
+
+import { isGlpSaleLive, isGlpSaleSlug, glpSalePrice } from "@/lib/sale";
 
 const WC_URL    = import.meta.env.VITE_WC_URL    as string;
 const WC_KEY    = import.meta.env.VITE_WC_KEY    as string;
@@ -359,7 +361,7 @@ export async function validateCoupon(
 /**
  * Extracts the content amount (e.g. "100mg", "10ml") from a product slug or name.
  * Matches the last number+unit pattern (mg, ml, mcg, iu, g) in the slug.
- * This is how all Warrior products are named: "pt-141-10mg", "bac-water-10ml".
+ * This is how all Valkyrie products are named: "pt-141-10mg", "bac-water-10ml".
  * No WooCommerce attribute setup required - works automatically for every product.
  */
 function extractContent(slug: string, name: string): string | null {
@@ -376,12 +378,18 @@ function extractContent(slug: string, name: string): string | null {
  */
 export function normalizeProduct(p: WCProduct) {
   const content = extractContent(p.slug, p.name);
+  const regularPrice = parseFloat(p.regular_price) || parseFloat(p.price) || 0;
 
-  // Read Warrior tab meta written by import-product-tabs.php
-  const metaCoa      = p.meta_data.find((m) => m.key === "_warrior_coa_images")?.value ?? "";
-  const metaInfo     = p.meta_data.find((m) => m.key === "_warrior_additional_info")?.value ?? "";
-  const purityPdf    = (p.meta_data.find((m) => m.key === "_warrior_coa_purity_pdf")?.value as string) ?? "";
-  const endotoxinPdf = (p.meta_data.find((m) => m.key === "_warrior_coa_endotoxin_pdf")?.value as string) ?? "";
+  // GLP sale (see lib/sale.ts) auto-applies its discount to the GLP-1/2/3 +
+  // Cagrilinitide line while it's live, straight off the regular price -
+  // doesn't depend on anyone setting a WooCommerce sale_price per product.
+  const glpSaleActive = isGlpSaleLive() && isGlpSaleSlug(p.slug);
+
+  // Read Valkyrie tab meta written by import-product-tabs.php
+  const metaCoa      = p.meta_data.find((m) => m.key === "_valkyrie_coa_images")?.value ?? "";
+  const metaInfo     = p.meta_data.find((m) => m.key === "_valkyrie_additional_info")?.value ?? "";
+  const purityPdf    = (p.meta_data.find((m) => m.key === "_valkyrie_coa_purity_pdf")?.value as string) ?? "";
+  const endotoxinPdf = (p.meta_data.find((m) => m.key === "_valkyrie_coa_endotoxin_pdf")?.value as string) ?? "";
 
   let coaImages: string[] = [];
   try {
@@ -393,9 +401,9 @@ export function normalizeProduct(p: WCProduct) {
     slug: p.slug,
     name: p.name,
     category: p.categories[0]?.name ?? "Peptides",
-    price: parseFloat(p.price) || 0,
-    originalPrice: parseFloat(p.regular_price) || parseFloat(p.price) || 0,
-    onSale: !!p.on_sale,
+    price: glpSaleActive ? glpSalePrice(regularPrice) : (parseFloat(p.price) || 0),
+    originalPrice: regularPrice,
+    onSale: glpSaleActive || !!p.on_sale,
     featured: !!p.featured,
     image: p.images[0]?.src ?? "/placeholder.png",
     images: p.images.map((img) => img.src),

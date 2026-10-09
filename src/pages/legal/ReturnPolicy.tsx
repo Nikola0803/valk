@@ -137,8 +137,8 @@ export default function ReturnPolicyPage() {
             <section>
               <h2 className="font-black text-xl uppercase tracking-tight text-[#111] mb-4">6. Contact</h2>
               <div className="p-6" style={{ background: "#111", color: "#fff" }}>
-                <p className="font-bold text-sm mb-1">Warrior Distributions - Returns Department</p>
-                <p className="text-white/60 text-sm">Phone: (541)-709-5434</p>
+                <p className="font-bold text-sm mb-1">Valkyrie Peptides - Returns Department</p>
+                <p className="text-white/60 text-sm">Phone: (208) 243-9222</p>
                 <p className="text-white/60 text-sm mt-1">Please have your order number ready when contacting us about a return.</p>
               </div>
             </section>

@@ -40,7 +40,7 @@ export default function COAHero() {
       />
       <img
         src="https://images.unsplash.com/photo-1581093458791-9f3c3900df7b?w=1600&h=500&fit=crop&auto=format"
-        alt="Warrior Lab Testing"
+        alt="Valkyrie Lab Testing"
         className="absolute inset-0 w-full h-full object-cover object-center opacity-20"
       />
       <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(10,10,10,1) 0%, rgba(10,10,10,0.7) 50%, rgba(10,10,10,0.4) 100%)" }} />
@@ -53,7 +53,7 @@ export default function COAHero() {
           }}
         >
           <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-white/30 mb-5">
-            Warrior Distributions
+            Valkyrie Peptides
           </p>
           <h1
             className="font-black uppercase leading-[0.9] tracking-tight mb-6"

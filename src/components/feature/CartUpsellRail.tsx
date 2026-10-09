@@ -32,7 +32,7 @@ export default function CartUpsellRail({ limit = 6, variant = "list" }: CartUpse
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-black text-[#111]">${p.price.toFixed(2)}</span>
               <button
-                onClick={() => addItem({ id: p.id, slug: p.slug, name: p.name, price: p.price, image: p.image })}
+                onClick={() => addItem({ id: p.id, slug: p.slug, name: p.name, price: p.price, image: p.image, category: p.category, originalPrice: p.originalPrice, onSale: p.onSale })}
                 className="w-6 h-6 flex items-center justify-center cursor-pointer flex-shrink-0"
                 style={{ background: "#111", color: "#fff" }}
                 aria-label={`Add ${p.name}`}
@@ -58,7 +58,7 @@ export default function CartUpsellRail({ limit = 6, variant = "list" }: CartUpse
             <span className="text-xs font-black text-[#888]">${p.price.toFixed(2)}</span>
           </Link>
           <button
-            onClick={() => addItem({ id: p.id, slug: p.slug, name: p.name, price: p.price, image: p.image })}
+            onClick={() => addItem({ id: p.id, slug: p.slug, name: p.name, price: p.price, image: p.image, category: p.category, originalPrice: p.originalPrice, onSale: p.onSale })}
             className="flex-shrink-0 px-3.5 py-2.5 text-[10px] font-black uppercase tracking-widest cursor-pointer whitespace-nowrap transition-colors"
             style={{ background: "#111", color: "#fff" }}
           >

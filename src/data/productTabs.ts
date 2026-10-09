@@ -24,7 +24,7 @@ const productTabs: Record<number, ProductTabData> = {
       "https://valkyriepeptides.com/wp-content/uploads/2024/09/1773253842237-3b359788-7187-42c5-a47b-b9efd3fab57b_2.jpg",
     ],
     additionalInfo:
-      "Tesamorelin — GHRH Analogue for Endocrine & Metabolic Research. Tesamorelin is a synthetic growth hormone–releasing hormone (GHRH) analogue widely examined in laboratory research for its role in growth hormone (GH) axis signaling and systemic metabolic regulation. Warrior Distributions supplies Tesamorelin as a lyophilized research-grade compound. Research areas: Mechanisms governing GH-axis stimulation and downstream IGF-1 signaling | Metabolic regulation involving lipid mobilization and energy-balance pathways | Endocrine-driven changes in tissue composition | Interactions between GH signaling and neuronal or cognitive pathways. Format: Lyophilized powder. For laboratory research use only.",
+      "Tesamorelin — GHRH Analogue for Endocrine & Metabolic Research. Tesamorelin is a synthetic growth hormone–releasing hormone (GHRH) analogue widely examined in laboratory research for its role in growth hormone (GH) axis signaling and systemic metabolic regulation. Valkyrie Peptides supplies Tesamorelin as a lyophilized research-grade compound. Research areas: Mechanisms governing GH-axis stimulation and downstream IGF-1 signaling | Metabolic regulation involving lipid mobilization and energy-balance pathways | Endocrine-driven changes in tissue composition | Interactions between GH signaling and neuronal or cognitive pathways. Format: Lyophilized powder. For laboratory research use only.",
   },
   124: {
     productName: "GLP-3 (RT) – 30MG",
@@ -33,7 +33,7 @@ const productTabs: Record<number, ProductTabData> = {
       "https://valkyriepeptides.com/wp-content/uploads/2024/09/VP-4892263-Retatrutide-Purity_page-0002.jpg",
     ],
     additionalInfo:
-      "GLP-3 (RT) — Multi-Receptor Research Peptide. GLP-3 (RT) (also referenced as GLP3-RTA or LY-3437943) is a synthetic research peptide evaluated in advanced metabolic and endocrine signaling models. Characterised by interaction with GLP-1, GIP, and glucagon receptor pathways. Provided as lyophilized powder by Warrior Distributions. For laboratory research use only.",
+      "GLP-3 (RT) — Multi-Receptor Research Peptide. GLP-3 (RT) (also referenced as GLP3-RTA or LY-3437943) is a synthetic research peptide evaluated in advanced metabolic and endocrine signaling models. Characterised by interaction with GLP-1, GIP, and glucagon receptor pathways. Provided as lyophilized powder by Valkyrie Peptides. For laboratory research use only.",
   },
   128: {
     productName: "NAD+ – 500MG",

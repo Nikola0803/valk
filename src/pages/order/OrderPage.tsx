@@ -8,9 +8,10 @@ import { createOrder, validateCoupon, type WCOrderPayload } from "@/lib/woocomme
 import { createPaymentSession } from "@/lib/circoflows";
 import { getAttributionMetaData } from "@/lib/attribution";
 import { getSession } from "@/lib/wcAuth";
+import { trackBeginCheckout, trackAddShippingInfo, trackAddPaymentInfo, trackPurchase } from "@/lib/analytics";
 import {
   getTaxRate, SHIPPING_RATE, PAYMENT_LABELS, getPaymentHandle, isManualPaymentMethod,
-  EMAIL_RE, type PaymentMethod,
+  ALT_PAYMENT_DISCOUNT_RATE, EMAIL_RE, type PaymentMethod,
 } from "@/pages/order/orderData";
 import type { OrderForm } from "@/pages/order/components/ShippingStep";
 import OrderEmptyCart from "@/pages/order/components/OrderEmptyCart";
@@ -22,6 +23,13 @@ import ShippingStep   from "@/pages/order/components/ShippingStep";
 import PaymentStep    from "@/pages/order/components/PaymentStep";
 import ReviewStep     from "@/pages/order/components/ReviewStep";
 import OrderSidebar   from "@/pages/order/components/OrderSidebar";
+
+// The valkyrie-payments plugin (CircoFlows card integration) isn't installed/
+// active on production - GET /wp-json/valkyrie/v1/payment/health 404s, meaning
+// every "Pay with Card" attempt fails instantly with no real backend to talk
+// to. Flip this back to true once that plugin is deployed, configured with
+// real CircoFlows credentials, and /payment/health reports api_key_configured.
+const CARD_PAYMENTS_LIVE = false;
 
 // Set just before redirecting to CircoFlows's hosted card page so the
 // confirmation view (after the customer is redirected back) can show the same
@@ -44,7 +52,7 @@ const BLANK_ORDER_FORM: OrderForm = {
 };
 
 export default function OrderPage() {
-  const { items, totalPrice, subtotal, discountAmount, appliedCoupon, setCoupon, clearCart } = useCart();
+  const { items, totalPrice, subtotal, discountAmount, bogoDiscount, discountsLocked, appliedCoupon, setCoupon, clearCart } = useCart();
   const [searchParams] = useSearchParams();
 
   // Present after a full-page redirect back from CircoFlows's hosted card page.
@@ -64,9 +72,9 @@ export default function OrderPage() {
   // and a manual method is the default instead. Computed once at mount (lazy
   // initializer) since the "return to checkout after a decline" flow uses a full
   // page reload specifically so this re-reads fresh.
-  const [cardUnavailable] = useState<boolean>(() => sessionStorage.getItem(CARD_UNAVAILABLE_KEY) === "1");
+  const [cardUnavailable] = useState<boolean>(() => !CARD_PAYMENTS_LIVE || sessionStorage.getItem(CARD_UNAVAILABLE_KEY) === "1");
   const [method, setMethod] = useState<PaymentMethod>(() =>
-    sessionStorage.getItem(CARD_UNAVAILABLE_KEY) === "1" ? "zelle" : "card"
+    !CARD_PAYMENTS_LIVE || sessionStorage.getItem(CARD_UNAVAILABLE_KEY) === "1" ? "zelle" : "card"
   );
   const [step, setStep]                     = useState<1 | 2 | 3>(1);
   const [submitting, setSubmitting]         = useState(false);
@@ -107,6 +115,13 @@ export default function OrderPage() {
     if (!appliedCoupon) {
       triggerDcodeReloadWorkaround();
     }
+    // Checkout funnel start - fires once per mount, matching GA4's begin_checkout
+    // semantics (reached the checkout page with a non-empty cart). Skipped when
+    // returning from CircoFlows's hosted card page (returningCardRef) - that's a
+    // mid-flow redirect back, not a fresh checkout start.
+    if (items.length > 0 && !returningCardRef) {
+      trackBeginCheckout(items);
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -125,8 +140,21 @@ export default function OrderPage() {
   }, [appliedCoupon]);
 
   const taxRate    = useMemo(() => getTaxRate(form.state), [form.state]);
-  const taxAmount  = useMemo(() => Math.round(totalPrice * (taxRate / 100) * 100) / 100, [totalPrice, taxRate]);
-  const grandTotal = useMemo(() => Math.round((totalPrice + taxAmount + SHIPPING_RATE) * 100) / 100, [totalPrice, taxAmount]);
+  // Zelle/Venmo/Cash App's extra 5% off - shown on checkout whenever a manual
+  // method is selected, but its effect is zero (still shown, just $0.00)
+  // once the GLP sale or BOGO already discounts this cart - see
+  // discountsLocked in useCart.tsx. "it just shows on checkout, doesn't get
+  // applied" - the coupon/affiliate code still gets sent and attributed,
+  // but can't add savings on top of what the sale/BOGO already gives.
+  const altPaymentDiscount = useMemo(
+    () => (isManualPaymentMethod(method) && !discountsLocked
+      ? Math.round(totalPrice * (ALT_PAYMENT_DISCOUNT_RATE / 100) * 100) / 100
+      : 0),
+    [method, discountsLocked, totalPrice]
+  );
+  const postDiscountTotal = Math.max(0, totalPrice - altPaymentDiscount);
+  const taxAmount  = useMemo(() => Math.round(postDiscountTotal * (taxRate / 100) * 100) / 100, [postDiscountTotal, taxRate]);
+  const grandTotal = useMemo(() => Math.round((postDiscountTotal + taxAmount + SHIPPING_RATE) * 100) / 100, [postDiscountTotal, taxAmount]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -167,7 +195,14 @@ export default function OrderPage() {
     if (empty) { setFieldError("Please fill in all required fields."); return; }
     if (!EMAIL_RE.test(form.email)) { setFieldError("Please enter a valid email address."); return; }
     setFieldError("");
+    trackAddShippingInfo(items);
     setStep(2);
+    window.scrollTo(0, 0);
+  };
+
+  const handleContinueToReview = () => {
+    trackAddPaymentInfo(items, PAYMENT_LABELS[method]);
+    setStep(3);
     window.scrollTo(0, 0);
   };
 
@@ -223,8 +258,26 @@ export default function OrderPage() {
         address_1: form.address, city: form.city,
         state: form.state, postcode: form.zip, country: "US",
       },
-      line_items: items.map((item) => ({ product_id: item.id, quantity: item.quantity, name: item.name })),
+      // subtotal/total pinned explicitly to the cart's already-discounted
+      // item price - without this, WooCommerce prices the order off each
+      // product's own regular price server-side, silently ignoring any
+      // client-side sale discount (GLP sale, etc.) and charging full price
+      // regardless of what the checkout UI displayed.
+      line_items: items.map((item) => {
+        const lineTotal = (item.price * item.quantity).toFixed(2);
+        return { product_id: item.id, quantity: item.quantity, name: item.name, subtotal: lineTotal, total: lineTotal };
+      }),
+      // coupon_lines is still sent unconditionally (even when discountsLocked)
+      // so the affiliate/coupon still gets attributed on the order - the
+      // server neutralizes its price effect back to $0 when a sale/BOGO
+      // discount already applies to this cart (VROUTER_Glp_Sale /
+      // VROUTER_Bogo in the valkyrie-router plugin), it never skips
+      // recording the coupon itself.
       coupon_lines: appliedCoupon ? [{ code: appliedCoupon.coupon.code }] : undefined,
+      fee_lines: [
+        ...(bogoDiscount > 0 ? [{ name: "Buy 2 Get 1 Free", total: (-bogoDiscount).toFixed(2), tax_class: "", tax_status: "none" }] : []),
+        ...(altPaymentDiscount > 0 ? [{ name: `${ALT_PAYMENT_DISCOUNT_RATE}% off - ${PAYMENT_LABELS[method]}`, total: (-altPaymentDiscount).toFixed(2), tax_class: "", tax_status: "none" }] : []),
+      ],
       shipping_lines: [{ method_title: "Flat Rate", method_id: "flat_rate", total: SHIPPING_RATE.toFixed(2) }],
       customer_note: form.notes || undefined,
       meta_data: [
@@ -244,9 +297,19 @@ export default function OrderPage() {
     };
     try {
       const order = await createOrder(payload);
+      const orderNumber = order.number ?? String(order.id);
       setOrderTotal(grandTotal);
       setOrderTax(taxAmount);
-      setOrderId(order.number ?? String(order.id));
+      setOrderId(orderNumber);
+      trackPurchase({
+        orderId: orderNumber,
+        value: grandTotal,
+        tax: taxAmount,
+        shipping: SHIPPING_RATE,
+        paymentType: PAYMENT_LABELS[method],
+        coupon: appliedCoupon?.coupon.code,
+        items,
+      });
       clearCart();
       sessionStorage.removeItem(SHIPPING_FORM_DRAFT_KEY);
       setSubmitted(true);
@@ -322,6 +385,7 @@ export default function OrderPage() {
                 setMethod={setMethod}
                 grandTotal={grandTotal}
                 setStep={setStep}
+                onContinue={handleContinueToReview}
                 cardDisabled={cardUnavailable}
               />
             )}
@@ -348,6 +412,10 @@ export default function OrderPage() {
               items={items}
               subtotal={subtotal}
               discountAmount={discountAmount}
+              bogoDiscount={bogoDiscount}
+              altPaymentDiscount={altPaymentDiscount}
+              discountsLocked={discountsLocked}
+              showAltPaymentLine={isManualPaymentMethod(method)}
               appliedCoupon={appliedCoupon}
               couponCode={couponCode}
               setCouponCode={setCouponCode}

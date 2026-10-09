@@ -21,10 +21,10 @@ export default function QualitySection() {
             {/* Left: premium editorial composite */}
             <div className="relative overflow-hidden self-stretch" style={{ minHeight: 560, background: "#050505" }}>
 
-              {/* Base: real Warrior product lineup photo */}
+              {/* Base: real Valkyrie product lineup photo */}
               <img
                 src="/IMG_0912.jpeg"
-                alt="Warrior Distributions full product lineup"
+                alt="Valkyrie Peptides full product lineup"
                 className="absolute inset-0 w-full h-full object-cover"
                 style={{ objectPosition: "center 40%" }}
               />
@@ -84,7 +84,7 @@ export default function QualitySection() {
                 <span style={{ background: "linear-gradient(135deg, #777 0%, #b0b0b0 30%, #555 55%, #999 75%, #666 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", fontFamily: "'Oswald', sans-serif", fontWeight: 700 }}>VERIFICATION</span>
               </h2>
               <p className="text-[#777] text-sm leading-relaxed mb-8">
-                Warrior Distributions operates at the forefront of research-grade peptide acquisition. Each product undergoes independent third-party testing to confirm:
+                Valkyrie Peptides operates at the forefront of research-grade peptide acquisition. Each product undergoes independent third-party testing to confirm:
               </p>
 
               <div className="space-y-3 mb-10">
@@ -130,7 +130,7 @@ export default function QualitySection() {
               <span style={{ background: "linear-gradient(135deg, #707070 0%, #b0b0b0 30%, #484848 55%, #999 75%, #606060 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", fontFamily: "'Oswald', sans-serif", fontWeight: 700 }}>RESEARCH EXCELLENCE</span>
             </h2>
             <p className="text-white/55 text-sm leading-[1.85] uppercase tracking-wide max-w-2xl" style={{ fontWeight: 500 }}>
-              Warrior Distributions is built on a foundation of scientific integrity, transparency, and reliability. Our mission is to support researchers with high-quality materials that contribute to meaningful scientific progress. We understand the importance of consistency in laboratory environments, which is why we prioritize:
+              Valkyrie Peptides is built on a foundation of scientific integrity, transparency, and reliability. Our mission is to support researchers with high-quality materials that contribute to meaningful scientific progress. We understand the importance of consistency in laboratory environments, which is why we prioritize:
             </p>
           </div>
 

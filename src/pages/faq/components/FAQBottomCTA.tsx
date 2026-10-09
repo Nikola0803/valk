@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
 const ctaItems = [
-  { icon: "ri-phone-line", title: "Call Us", desc: "(541)-709-5434", sub: "7 days a week", href: "tel:2082439222", isExternal: true },
+  { icon: "ri-phone-line", title: "Call Us", desc: "(208) 243-9222", sub: "7 days a week", href: "tel:2082439222", isExternal: true },
   { icon: "ri-file-list-3-line", title: "View COAs", desc: "Certificates of Analysis", sub: "All products tested", href: "/coa", isExternal: false },
   { icon: "ri-shopping-cart-line", title: "Shop Now", desc: "All 20 Peptides", sub: "Free US shipping available", href: "/shop", isExternal: false },
 ];

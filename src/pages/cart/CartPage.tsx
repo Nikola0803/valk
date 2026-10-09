@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "@/components/feature/Navbar";
 import FooterSection from "@/pages/home/components/FooterSection";
-import FreeShippingBar from "@/components/feature/FreeShippingBar";
 import CartUpsellRail from "@/components/feature/CartUpsellRail";
 import { useCart } from "@/hooks/useCart";
 
@@ -37,10 +36,6 @@ export default function CartPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
             {/* Line items */}
             <div className="lg:col-span-2">
-              <div className="mb-6 p-5" style={{ background: "#fafafa", border: "1px solid #e8e8e8" }}>
-                <FreeShippingBar subtotal={subtotal} />
-              </div>
-
               <div style={{ borderTop: "1px solid #ebebeb" }}>
                 {items.map((item) => (
                   <div key={item.id} className="flex items-start gap-5 py-6" style={{ borderBottom: "1px solid #ebebeb" }}>
