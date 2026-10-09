@@ -3,7 +3,7 @@
  * Plugin Name: Valkyrie Frontend Router
  * Plugin URI:  https://valkyriepeptides.com
  * Description: Serves the built React/Vite storefront as this site's actual front-end. Run `npm run build`, zip the contents of dist/, upload it under "Valkyrie Frontend" in wp-admin, and flip on "SPA takeover" - toggle the whole frontend on/off without touching files by hand. Rebuilt on the same upload/toggle/router skeleton as the Aera Frontend Loader plugin.
- * Version:     2.1.0
+ * Version:     2.2.0
  * Author:      Valkyrie Research LLC
  * Text Domain: valkyrie-router
  * Requires WP: 6.0
@@ -12,7 +12,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'VROUTER_VERSION', '2.1.0' );
+define( 'VROUTER_VERSION', '2.2.0' );
 define( 'VROUTER_PLUGIN_FILE', __FILE__ );
 define( 'VROUTER_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'VROUTER_PLUGIN_URL', plugin_dir_url( __FILE__ ) );

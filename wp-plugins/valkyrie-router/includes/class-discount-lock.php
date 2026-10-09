@@ -27,11 +27,64 @@ class VROUTER_Discount_Lock {
 	const ALT_PAYMENT_RATE          = 5; // percent - keep in sync with ALT_PAYMENT_DISCOUNT_RATE in src/pages/order/orderData.ts
 	const ALT_PAYMENT_METHODS       = [ 'zelle', 'venmo', 'cashapp' ];
 	const COUPON_LOCK_FEE_LABEL     = 'Coupon discounts paused during sale';
+	const PENDING_TARGET_STATUS_META = '_vrouter_pending_target_status';
 
 	public static function init() {
+		// Runs BEFORE $order->save() inside the REST controller - see
+		// defer_status_until_totals_final() below for why this has to exist.
+		add_filter( 'woocommerce_rest_pre_insert_shop_order_object', [ __CLASS__, 'defer_status_until_totals_final' ], 1, 3 );
 		add_action( 'woocommerce_rest_insert_shop_order_object', [ __CLASS__, 'strip_untrusted_fees' ], 8, 3 );
 		add_action( 'woocommerce_rest_insert_shop_order_object', [ __CLASS__, 'apply_alt_payment_discount' ], 15, 3 );
 		add_action( 'woocommerce_rest_insert_shop_order_object', [ __CLASS__, 'neutralize_coupon_during_lock' ], 20, 3 );
+		// Must run LAST, after every total-correcting hook above.
+		add_action( 'woocommerce_rest_insert_shop_order_object', [ __CLASS__, 'apply_deferred_status' ], 25, 3 );
+	}
+
+	/**
+	 * The manual-payment checkout (OrderPage.tsx) sets status on-hold
+	 * directly in the order-creation request. WooCommerce transitions to
+	 * that status - and fires its customer "on-hold" email - during
+	 * $order->save() inside the REST controller's create_item(), which
+	 * happens BEFORE woocommerce_rest_insert_shop_order_object fires (that's
+	 * the hook every fee/coupon correction below runs on). So the customer
+	 * email always showed the order's PRE-correction total (full price,
+	 * coupon stacked, no BOGO/alt-payment discount applied yet) while the
+	 * actually-saved order - and the checkout page, computed independently
+	 * in JS - reflected the POST-correction total. Different number on the
+	 * email than what was actually charged, with no code bug in the
+	 * correction logic itself - just bad timing.
+	 *
+	 * Fix: force the order quiet ("pending", WooCommerce's own default
+	 * no-notification starting status - literally how native WooCommerce
+	 * checkout always creates orders too, before transitioning them once
+	 * payment is final) until every correction hook has run, then perform
+	 * the real transition ourselves in apply_deferred_status() below. That
+	 * transition is what actually fires the customer/admin emails - by then
+	 * the order's totals are completely final.
+	 */
+	public static function defer_status_until_totals_final( $order, $request, $creating ) {
+		if ( ! $creating || ! $order instanceof WC_Order ) {
+			return $order;
+		}
+		$intended = $order->get_status();
+		if ( $intended && $intended !== 'pending' ) {
+			$order->update_meta_data( self::PENDING_TARGET_STATUS_META, $intended );
+			$order->set_status( 'pending' );
+		}
+		return $order;
+	}
+
+	/** Performs the real status transition - and with it, the customer/admin emails - now that totals are final. */
+	public static function apply_deferred_status( $order, $request, $creating ) {
+		if ( ! $creating || ! $order instanceof WC_Order ) {
+			return;
+		}
+		$target = $order->get_meta( self::PENDING_TARGET_STATUS_META );
+		if ( ! $target ) {
+			return;
+		}
+		$order->delete_meta_data( self::PENDING_TARGET_STATUS_META );
+		$order->update_status( $target );
 	}
 
 	/**
