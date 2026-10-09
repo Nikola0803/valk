@@ -22,7 +22,7 @@ export default function PaymentStep({ method, setMethod, grandTotal, setStep, on
       {cardDisabled && (
         <div className="mb-6 p-4" style={{ background: "#fff7ed", border: "1px solid #fed7aa" }}>
           <p className="text-[#9a3412] text-xs font-bold leading-relaxed">
-            Card payments aren't available for this order right now. Please choose Zelle, Venmo, or Cash App below to complete your purchase.
+            Card payments aren't available right now. Please choose Zelle, Venmo, or Cash App below to complete your purchase.
           </p>
         </div>
       )}

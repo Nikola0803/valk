@@ -24,6 +24,13 @@ import PaymentStep    from "@/pages/order/components/PaymentStep";
 import ReviewStep     from "@/pages/order/components/ReviewStep";
 import OrderSidebar   from "@/pages/order/components/OrderSidebar";
 
+// The valkyrie-payments plugin (CircoFlows card integration) isn't installed/
+// active on production - GET /wp-json/valkyrie/v1/payment/health 404s, meaning
+// every "Pay with Card" attempt fails instantly with no real backend to talk
+// to. Flip this back to true once that plugin is deployed, configured with
+// real CircoFlows credentials, and /payment/health reports api_key_configured.
+const CARD_PAYMENTS_LIVE = false;
+
 // Set just before redirecting to CircoFlows's hosted card page so the
 // confirmation view (after the customer is redirected back) can show the same
 // email/amount breakdown OrderSuccess shows, without relying on component state
@@ -65,9 +72,9 @@ export default function OrderPage() {
   // and a manual method is the default instead. Computed once at mount (lazy
   // initializer) since the "return to checkout after a decline" flow uses a full
   // page reload specifically so this re-reads fresh.
-  const [cardUnavailable] = useState<boolean>(() => sessionStorage.getItem(CARD_UNAVAILABLE_KEY) === "1");
+  const [cardUnavailable] = useState<boolean>(() => !CARD_PAYMENTS_LIVE || sessionStorage.getItem(CARD_UNAVAILABLE_KEY) === "1");
   const [method, setMethod] = useState<PaymentMethod>(() =>
-    sessionStorage.getItem(CARD_UNAVAILABLE_KEY) === "1" ? "zelle" : "card"
+    !CARD_PAYMENTS_LIVE || sessionStorage.getItem(CARD_UNAVAILABLE_KEY) === "1" ? "zelle" : "card"
   );
   const [step, setStep]                     = useState<1 | 2 | 3>(1);
   const [submitting, setSubmitting]         = useState(false);
