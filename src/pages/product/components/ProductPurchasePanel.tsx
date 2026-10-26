@@ -197,7 +197,7 @@ export default function ProductPurchasePanel({
         {[
           { icon: "ri-truck-line",              text: "Order before 2pm EST for same-day processing" },
           { icon: "ri-map-pin-line",            text: "US domestic shipping only · Tracked delivery" },
-          { icon: "ri-customer-service-2-line", text: "7-day expert support · (541)-709-5434" },
+          { icon: "ri-customer-service-2-line", text: "7-day expert support · (208) 243-9222" },
         ].map((item, i) => (
           <div key={i} className="flex items-center gap-3">
             <div className="w-4 h-4 flex items-center justify-center flex-shrink-0">

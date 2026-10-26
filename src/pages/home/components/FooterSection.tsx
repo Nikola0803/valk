@@ -95,7 +95,7 @@ export default function FooterSection() {
             <div>
               <img
                 src="https://valkyriepeptides.com/wp-content/uploads/2024/09/Valkyrie-Horizontal-2-1.webp"
-                alt="Warrior Distributions"
+                alt="Valkyrie Peptides"
                 className="h-7 w-auto object-contain mb-6"
               />
               <p className="text-white/50 text-xs leading-relaxed mb-6">
@@ -140,7 +140,7 @@ export default function FooterSection() {
               </h4>
               <ul className="space-y-3">
                 {[
-                  { label: "(541)-709-5434", href: "tel:2082439222", a: true },
+                  { label: "(208) 243-9222", href: "tel:2082439222", a: true },
                   { label: "Contact Us", href: "/contact" },
                   { label: "Return Policy", href: "/return-policy" },
                   { label: "Privacy Policy", href: "/privacy-policy" },
@@ -301,7 +301,7 @@ export default function FooterSection() {
             any disease.
           </p>
           <p className="text-white/40 text-xs leading-relaxed">
-            Warrior Distributions is a chemical supplier, not a compounding
+            Valkyrie Peptides is a chemical supplier, not a compounding
             pharmacy or outsourcing facility as defined under 503A or 503B of
             the Federal Food, Drug, and Cosmetic Act.
           </p>
@@ -312,7 +312,7 @@ export default function FooterSection() {
             <p className="text-white/45 text-xs">
               Copyright &copy; 2026{" "}
               <Link to="/" className="hover:text-white/70 transition-colors">
-                Warrior Distributions
+                Valkyrie Peptides
               </Link>
               . All rights reserved.
             </p>
@@ -321,9 +321,9 @@ export default function FooterSection() {
                 We Accept:
               </span>
               {[
-                { label: "Zelle", sub: "509-220-5434" },
-                { label: "Cash App", sub: "$warriordistributions" },
-                { label: "Venmo", sub: "@warriordistributions" },
+                { label: "Zelle", sub: "208-280-3993" },
+                { label: "Cash App", sub: "$ValkyrieResearch" },
+                { label: "Venmo", sub: "@valkyrie-research" },
               ].map((method) => (
                 <div
                   key={method.label}

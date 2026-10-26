@@ -83,7 +83,7 @@ export default function BlogPostBody({ title, excerpt, body, tags, author, autho
           </div>
           <div>
             <p className="font-black text-sm uppercase tracking-tight text-[#111]">{author}</p>
-            <p className="text-[#888] text-xs mt-0.5">{authorRole} · Warrior Distributions</p>
+            <p className="text-[#888] text-xs mt-0.5">{authorRole} · Valkyrie Peptides</p>
           </div>
         </div>
 

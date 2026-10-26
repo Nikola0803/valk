@@ -23,7 +23,7 @@ const faqs = [
   },
   {
     q: "What if I have trouble submitting verification?",
-    a: "Contact our support team at support@warriordistributions.com or call (541)-709-5434 and we'll personally walk you through the process.",
+    a: "Contact our support team at support@valkyriepeps.com or call (208) 243-9222 and we'll personally walk you through the process.",
   },
 ];
 
@@ -50,13 +50,13 @@ export default function VeteransFAQ() {
                 <div className="w-9 h-9 flex items-center justify-center flex-shrink-0" style={{ background: "#111" }}>
                   <i className="ri-phone-line text-white text-sm"></i>
                 </div>
-                <span className="text-[#555] text-sm font-semibold group-hover:text-[#111] transition-colors">(541)-709-5434</span>
+                <span className="text-[#555] text-sm font-semibold group-hover:text-[#111] transition-colors">(208) 243-9222</span>
               </a>
-              <a href="mailto:support@warriordistributions.com" className="flex items-center gap-3 group cursor-pointer">
+              <a href="mailto:support@valkyriepeps.com" className="flex items-center gap-3 group cursor-pointer">
                 <div className="w-9 h-9 flex items-center justify-center flex-shrink-0" style={{ background: "#111" }}>
                   <i className="ri-mail-line text-white text-sm"></i>
                 </div>
-                <span className="text-[#555] text-sm font-semibold group-hover:text-[#111] transition-colors break-all">support@warriordistributions.com</span>
+                <span className="text-[#555] text-sm font-semibold group-hover:text-[#111] transition-colors break-all">support@valkyriepeps.com</span>
               </a>
             </div>
           </div>

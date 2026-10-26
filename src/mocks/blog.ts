@@ -40,9 +40,9 @@ Given its gastric origin, BPC-157 has been extensively studied in GI models. Res
 
 When designing BPC-157 studies, researchers should note that the peptide is highly stable in gastric acid and human plasma, making it suitable for various administration routes in animal models. Lyophilized preparations stored at -20°C maintain stability for 24+ months, while reconstituted solutions should be used within 28 days when stored at 4°C.
 
-Purity verification via HPLC is essential — impurities in lower-grade preparations have been shown to confound results in sensitive assays. All Warrior BPC-157 is independently verified at 99%+ purity before release.`,
+Purity verification via HPLC is essential — impurities in lower-grade preparations have been shown to confound results in sensitive assays. All Valkyrie BPC-157 is independently verified at 99%+ purity before release.`,
     category: "Research",
-    author: "Warrior Research Team",
+    author: "Valkyrie Research Team",
     authorRole: "Scientific Editorial",
     date: "Apr 10, 2026",
     readTime: "8 min read",
@@ -76,9 +76,9 @@ NAD+ is essential for the electron transport chain. Research in aged animal mode
 
 ## Research Grade Considerations
 
-For NAD+ research, purity is paramount. Contamination with NADH or nicotinamide can significantly alter experimental outcomes. Warrior NAD+ is tested at 99.5%+ purity via HPLC with full COA documentation available for each batch.`,
+For NAD+ research, purity is paramount. Contamination with NADH or nicotinamide can significantly alter experimental outcomes. Valkyrie NAD+ is tested at 99.5%+ purity via HPLC with full COA documentation available for each batch.`,
     category: "Longevity",
-    author: "Warrior Research Team",
+    author: "Valkyrie Research Team",
     authorRole: "Scientific Editorial",
     date: "Apr 3, 2026",
     readTime: "6 min read",
@@ -112,7 +112,7 @@ For research applications, reconstitution should be performed with bacteriostati
 
 Once reconstituted, peptides should be stored at 4°C and used within 28 days. Repeated freeze-thaw cycles degrade peptide integrity and should be avoided. For long-term storage of reconstituted peptides, aliquoting into single-use volumes before freezing is recommended.`,
     category: "Science",
-    author: "Warrior Research Team",
+    author: "Valkyrie Research Team",
     authorRole: "Scientific Editorial",
     date: "Mar 28, 2026",
     readTime: "5 min read",
@@ -144,9 +144,9 @@ Cardioprotective effects of GLP-1R agonism have been demonstrated in multiple pr
 
 ## Receptor Selectivity Considerations
 
-When designing GLP-1R studies, researchers should consider receptor selectivity carefully. Some peptides in this class show activity at GIP and glucagon receptors, which can confound results. Warrior's GLP-1 (SM) is characterized for GLP-1R selectivity to support clean mechanistic studies.`,
+When designing GLP-1R studies, researchers should consider receptor selectivity carefully. Some peptides in this class show activity at GIP and glucagon receptors, which can confound results. Valkyrie's GLP-1 (SM) is characterized for GLP-1R selectivity to support clean mechanistic studies.`,
     category: "Research",
-    author: "Warrior Research Team",
+    author: "Valkyrie Research Team",
     authorRole: "Scientific Editorial",
     date: "Mar 20, 2026",
     readTime: "7 min read",
@@ -182,7 +182,7 @@ Bacterial endotoxins (lipopolysaccharides) are potent immune activators that can
 
 When evaluating a COA, researchers should verify: the testing laboratory's accreditation, the specific methods used, the lot number matching the product received, and the date of analysis. COAs older than 12 months for the specific lot in hand should be treated with caution.`,
     category: "Quality",
-    author: "Warrior Research Team",
+    author: "Valkyrie Research Team",
     authorRole: "Scientific Editorial",
     date: "Mar 12, 2026",
     readTime: "6 min read",
@@ -214,7 +214,7 @@ Both peptides are characterized by short plasma half-lives (minutes to low hours
 
 Lyophilized preparations of both peptides are stable at -20°C for 24+ months. Given their small molecular weights (Semax: 813 Da, Selank: 751 Da), they are highly soluble in aqueous buffers and reconstitute readily.`,
     category: "Nootropics",
-    author: "Warrior Research Team",
+    author: "Valkyrie Research Team",
     authorRole: "Scientific Editorial",
     date: "Mar 5, 2026",
     readTime: "7 min read",

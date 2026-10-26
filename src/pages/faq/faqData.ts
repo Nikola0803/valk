@@ -16,7 +16,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         q: "Are your peptides synthetic or naturally derived?",
-        a: "All Warrior Distributions products are manufactured using solid-phase peptide synthesis (SPPS) and then lyophilized. This ensures precise amino acid sequences, high reproducibility, and consistent purity across batches.",
+        a: "All Valkyrie Peptides products are manufactured using solid-phase peptide synthesis (SPPS) and then lyophilized. This ensures precise amino acid sequences, high reproducibility, and consistent purity across batches.",
       },
     ],
   },
@@ -26,7 +26,7 @@ export const faqCategories: FAQCategory[] = [
     items: [
       {
         q: "Are your Peptides third-party tested?",
-        a: "Yes. All Warrior Distributions products undergo rigorous third-party testing through accredited independent laboratories. Testing includes HPLC purity analysis, mass spectrometry identity confirmation, endotoxin testing, sterility testing, and heavy metal screening. Certificates of Analysis (COAs) are available for each product.",
+        a: "Yes. All Valkyrie Peptides products undergo rigorous third-party testing through accredited independent laboratories. Testing includes HPLC purity analysis, mass spectrometry identity confirmation, endotoxin testing, sterility testing, and heavy metal screening. Certificates of Analysis (COAs) are available for each product.",
       },
       {
         q: "What purity levels do your peptides meet?",
@@ -38,7 +38,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         q: "How do I know your products are made in the USA?",
-        a: "Warrior Distributions Peptides are lyophilized and quality-tested entirely within the United States. We work exclusively with domestic manufacturing partners and third-party testing labs to ensure our supply chain never leaves US soil.",
+        a: "Valkyrie Peptides are lyophilized and quality-tested entirely within the United States. We work exclusively with domestic manufacturing partners and third-party testing labs to ensure our supply chain never leaves US soil.",
       },
     ],
   },
@@ -52,7 +52,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         q: "Can I change or cancel my order?",
-        a: "Orders can be modified or cancelled within a short window after placement. Please contact our support team as quickly as possible at (541)-709-5434 or via our contact form. Once an order has been processed and shipped, modifications may not be possible.",
+        a: "Orders can be modified or cancelled within a short window after placement. Please contact our support team as quickly as possible at (208) 243-9222 or via our contact form. Once an order has been processed and shipped, modifications may not be possible.",
       },
       {
         q: "Do you offer bulk pricing?",
@@ -113,12 +113,12 @@ export const faqCategories: FAQCategory[] = [
         a: "All products are sold strictly for research use only. They are NOT intended for human consumption, injection, or any form of medical or therapeutic use. These products are sold exclusively to qualified researchers and laboratories for in vitro and laboratory research purposes.",
       },
       {
-        q: "Who can purchase from Warrior Distributions Peptides?",
+        q: "Who can purchase from Valkyrie Peptides?",
         a: "Our products are intended for purchase by qualified scientists, researchers, and authorized representatives of research institutions. By purchasing, you confirm you are 18+ years of age and will use the products only for legitimate in vitro research purposes in a controlled laboratory environment.",
       },
       {
-        q: "Are Warrior Distributions Peptides FDA approved?",
-        a: "No. Our products are research chemicals and have not been evaluated or approved by the FDA. They are not intended to diagnose, treat, cure, or prevent any disease or medical condition. Warrior Distributions is a research chemical supplier, not a pharmaceutical company or compounding pharmacy.",
+        q: "Are Valkyrie Peptides FDA approved?",
+        a: "No. Our products are research chemicals and have not been evaluated or approved by the FDA. They are not intended to diagnose, treat, cure, or prevent any disease or medical condition. Valkyrie Peptides is a research chemical supplier, not a pharmaceutical company or compounding pharmacy.",
       },
     ],
   },

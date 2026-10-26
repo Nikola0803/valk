@@ -12,7 +12,7 @@ export default function VeteransHero() {
       <div className="lg:hidden w-full" style={{ background: "#111111" }}>
         <div className="px-4 py-10">
           <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-white/50 mb-4">
-            Warrior Distributions - Service Appreciation
+            Valkyrie Peptides - Service Appreciation
           </p>
           <h1
             className="font-black uppercase leading-[0.88] tracking-tight mb-5"
@@ -23,7 +23,7 @@ export default function VeteransHero() {
           <p className="text-white/65 text-sm leading-relaxed mb-8">
             Active Military, Veterans &amp; First Responders receive an{" "}
             <strong className="text-white font-black">exclusive 20% discount for life</strong>{" "}
-            on all Warrior Distributions products. American-made peptides for America&apos;s heroes.
+            on all Valkyrie Peptides products. American-made peptides for America&apos;s heroes.
           </p>
           <div className="flex flex-col sm:flex-row flex-wrap gap-3">
             <a
@@ -77,7 +77,7 @@ export default function VeteransHero() {
         />
         <div className="relative z-10 max-w-[1320px] mx-auto px-8 py-16 lg:py-20">
           <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-white/50 mb-4">
-            Warrior Distributions - Service Appreciation
+            Valkyrie Peptides - Service Appreciation
           </p>
           <h1
             className="font-black uppercase leading-[0.88] tracking-tight mb-5"
@@ -88,7 +88,7 @@ export default function VeteransHero() {
           <p className="text-white/65 text-base leading-relaxed max-w-lg mb-8">
             Active Military, Veterans &amp; First Responders receive an{" "}
             <strong className="text-white font-black">exclusive 20% discount for life</strong>{" "}
-            on all Warrior Distributions products. American-made peptides for America&apos;s heroes.
+            on all Valkyrie Peptides products. American-made peptides for America&apos;s heroes.
           </p>
           <div className="flex flex-wrap gap-4">
             <a

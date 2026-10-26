@@ -1,6 +1,6 @@
 const productFaqs = [
   { q: "How should I store this peptide?", a: "Store lyophilized peptides in a cool, dry place away from light. Reconstituted peptides should be refrigerated and used within 30 days." },
-  { q: "What is the purity level?", a: "All Warrior Distributions peptides are independently 3rd-party tested and verified at 99%+ purity." },
+  { q: "What is the purity level?", a: "All Valkyrie Peptides peptides are independently 3rd-party tested and verified at 99%+ purity." },
   { q: "Is this for human consumption?", a: "No - these products are for research use only. Not for human or veterinary use." },
   { q: "How long does shipping take?", a: "Orders ship within 1–2 business days from Boise, ID. Most US orders arrive in 3–5 business days." },
 ];
@@ -23,7 +23,7 @@ export default function ProductFAQSection({ openFaq, setOpenFaq }: ProductFAQSec
               <div className="w-4 h-4 flex items-center justify-center">
                 <i className="ri-phone-line text-sm"></i>
               </div>
-              (541)-709-5434
+              (208) 243-9222
             </a>
           </div>
           <div className="lg:col-span-2 divide-y" style={{ borderTop: "1px solid #e0e0e0" }}>

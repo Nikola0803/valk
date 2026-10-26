@@ -61,8 +61,8 @@ export default function VeteransClaimForm() {
             {/* Contact info */}
             <div className="space-y-3 mb-8">
               {[
-                { icon: "ri-phone-line", label: "(541)-709-5434", href: "tel:2082439222" },
-                { icon: "ri-mail-line", label: "support@warriordistributions.com", href: "mailto:support@warriordistributions.com" },
+                { icon: "ri-phone-line", label: "(208) 243-9222", href: "tel:2082439222" },
+                { icon: "ri-mail-line", label: "support@valkyriepeps.com", href: "mailto:support@valkyriepeps.com" },
               ].map((item) => (
                 <a key={item.label} href={item.href} className="flex items-center gap-3 group cursor-pointer">
                   <div className="w-9 h-9 flex items-center justify-center flex-shrink-0" style={{ background: "#111" }}>
