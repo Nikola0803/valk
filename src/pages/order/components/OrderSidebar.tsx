@@ -1,11 +1,15 @@
-import { SHIPPING_RATE } from "@/pages/order/orderData";
+import { SHIPPING_RATE, ALT_PAYMENT_DISCOUNT_RATE } from "@/pages/order/orderData";
 import type { CartItem, AppliedCoupon } from "@/hooks/useCart";
-import FreeShippingBar from "@/components/feature/FreeShippingBar";
 
 interface OrderSidebarProps {
   items: CartItem[];
   subtotal: number;
   discountAmount: number;
+  bogoDiscount: number;
+  altPaymentDiscount: number;
+  /** True when a coupon's price effect is zeroed because the GLP sale or BOGO already applies - see discountsLocked in useCart.tsx. */
+  discountsLocked: boolean;
+  showAltPaymentLine: boolean;
   appliedCoupon: AppliedCoupon | null;
   couponCode: string;
   setCouponCode: (v: string) => void;
@@ -22,18 +26,13 @@ interface OrderSidebarProps {
 }
 
 export default function OrderSidebar({
-  items, subtotal, discountAmount, appliedCoupon,
+  items, subtotal, discountAmount, bogoDiscount, altPaymentDiscount, discountsLocked, showAltPaymentLine, appliedCoupon,
   couponCode, setCouponCode, couponStatus, setCouponStatus, couponMsg, setCouponMsg,
   handleApplyCoupon, handleRemoveCoupon,
   taxRate, taxAmount, grandTotal, stateInput,
 }: OrderSidebarProps) {
   return (
     <div className="sticky top-24 flex flex-col gap-4">
-
-      {/* Free shipping progress */}
-      <div className="p-5" style={{ background: "#fff", border: "1px solid #e0e0e0" }}>
-        <FreeShippingBar subtotal={subtotal} />
-      </div>
 
       {/* Coupon input */}
       <div style={{ background: "#fff", border: "1px solid #e0e0e0" }}>
@@ -118,8 +117,26 @@ export default function OrderSidebar({
             <div className="flex items-center justify-between mb-2">
               <span className="text-green-600 text-xs font-semibold flex items-center gap-1">
                 <i className="ri-coupon-3-line text-xs"></i> Discount
+                {discountsLocked && <span className="text-[#aaa] text-[10px] font-normal normal-case">(paused during sale)</span>}
               </span>
               <span className="text-green-600 font-bold text-sm">−${discountAmount.toFixed(2)}</span>
+            </div>
+          )}
+          {bogoDiscount > 0 && (
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-green-600 text-xs font-semibold flex items-center gap-1">
+                <i className="ri-gift-line text-xs"></i> Buy 2 Get 1 Free
+              </span>
+              <span className="text-green-600 font-bold text-sm">−${bogoDiscount.toFixed(2)}</span>
+            </div>
+          )}
+          {showAltPaymentLine && (
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-green-600 text-xs font-semibold flex items-center gap-1">
+                <i className="ri-bank-line text-xs"></i> {ALT_PAYMENT_DISCOUNT_RATE}% off - manual payment
+                {discountsLocked && <span className="text-[#aaa] text-[10px] font-normal normal-case">(paused during sale)</span>}
+              </span>
+              <span className="text-green-600 font-bold text-sm">−${altPaymentDiscount.toFixed(2)}</span>
             </div>
           )}
           <div className="flex items-center justify-between mb-2">

@@ -11,7 +11,7 @@ export default function VeteransCommitment() {
             AMERICAN-MADE PEPTIDES<br />FOR AMERICA&apos;S HEROES
           </h2>
           <p className="text-[#555] text-sm leading-relaxed mb-4">
-            At Warrior Distributions, we believe that those who serve our country deserve our best - and our support. That&apos;s why we&apos;re proud to offer an <strong className="text-[#111]">exclusive 20% lifetime discount</strong> to all active military, veterans, and first responders.
+            At Valkyrie Peptides, we believe that those who serve our country deserve our best - and our support. That&apos;s why we&apos;re proud to offer an <strong className="text-[#111]">exclusive 20% lifetime discount</strong> to all active military, veterans, and first responders.
           </p>
           <p className="text-[#555] text-sm leading-relaxed">
             As a <strong className="text-[#111]">100% American company</strong>, we are deeply grateful for the sacrifices made by our military and first responder communities. Your courage, dedication, and selfless service inspire us to give back in every way we can.

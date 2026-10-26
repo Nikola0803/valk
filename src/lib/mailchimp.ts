@@ -1,5 +1,5 @@
 /**
- * Mailchimp Marketing API - Warrior Distributions
+ * Mailchimp Marketing API - Valkyrie Peptides
  *
  * Calls are proxied through /mailchimp → https://us9.api.mailchimp.com
  * so the API key never reaches the browser bundle.

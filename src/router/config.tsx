@@ -1,23 +1,30 @@
+import { lazy } from "react";
 import type { RouteObject } from "react-router-dom";
-import NotFound from "../pages/NotFound";
 import Home from "../pages/home/page";
-import ShopPage from "../pages/shop/ShopPage";
-import PrivacyPolicyPage from "../pages/legal/PrivacyPolicy";
-import TermsConditionsPage from "../pages/legal/TermsConditions";
-import ReturnPolicyPage from "../pages/legal/ReturnPolicy";
-import ResearchUseOnlyPage from "../pages/legal/ResearchUseOnly";
-import ProductDetailPage from "../pages/product/ProductDetailPage";
-import ContactPage from "../pages/contact/ContactPage";
-import FAQPage from "../pages/faq/FAQPage";
-import COAPage from "../pages/coa/COAPage";
-import COAVerifyPage from "../pages/coa/COAVerifyPage";
-import VeteransPage from "../pages/veterans/VeteransPage";
-import AboutPage from "../pages/about/AboutPage";
-import BlogPage from "../pages/blog/BlogPage";
-import BlogPostPage from "../pages/blog/BlogPostPage";
-import OrderPage from "../pages/order/OrderPage";
-import CartPage from "../pages/cart/CartPage";
-import AccountPage from "../pages/account/AccountPage";
+
+// Lazy-loaded so the initial bundle only has to ship the homepage's code -
+// every other route's JS downloads on demand when actually navigated to,
+// instead of all ~18 pages (legal, blog, checkout, account, everything)
+// being bundled into one ~800KB chunk the browser has to fetch and parse
+// before the homepage can even render.
+const NotFound             = lazy(() => import("../pages/NotFound"));
+const ShopPage             = lazy(() => import("../pages/shop/ShopPage"));
+const PrivacyPolicyPage    = lazy(() => import("../pages/legal/PrivacyPolicy"));
+const TermsConditionsPage  = lazy(() => import("../pages/legal/TermsConditions"));
+const ReturnPolicyPage     = lazy(() => import("../pages/legal/ReturnPolicy"));
+const ResearchUseOnlyPage  = lazy(() => import("../pages/legal/ResearchUseOnly"));
+const ProductDetailPage    = lazy(() => import("../pages/product/ProductDetailPage"));
+const ContactPage          = lazy(() => import("../pages/contact/ContactPage"));
+const FAQPage              = lazy(() => import("../pages/faq/FAQPage"));
+const COAPage               = lazy(() => import("../pages/coa/COAPage"));
+const COAVerifyPage         = lazy(() => import("../pages/coa/COAVerifyPage"));
+const VeteransPage          = lazy(() => import("../pages/veterans/VeteransPage"));
+const AboutPage             = lazy(() => import("../pages/about/AboutPage"));
+const BlogPage              = lazy(() => import("../pages/blog/BlogPage"));
+const BlogPostPage          = lazy(() => import("../pages/blog/BlogPostPage"));
+const OrderPage              = lazy(() => import("../pages/order/OrderPage"));
+const CartPage               = lazy(() => import("../pages/cart/CartPage"));
+const AccountPage            = lazy(() => import("../pages/account/AccountPage"));
 
 const routes: RouteObject[] = [
   { path: "/",                      element: <Home /> },

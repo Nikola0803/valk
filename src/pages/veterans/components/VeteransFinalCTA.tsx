@@ -22,7 +22,7 @@ export default function VeteransFinalCTA() {
               </span>
             </h2>
             <p className="text-white/50 text-sm leading-relaxed max-w-md">
-              From everyone at Warrior Distributions, we express our heartfelt gratitude for your service and sacrifice. This discount is our small way of giving back to those who have given so much.
+              From everyone at Valkyrie Peptides, we express our heartfelt gratitude for your service and sacrifice. This discount is our small way of giving back to those who have given so much.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-4 lg:justify-end">

@@ -13,6 +13,29 @@ export type COAEntry = {
 };
 
 /**
+ * Parses the loose testDate formats this library uses ("July 2026", ISO
+ * strings from the live wp-admin API, etc.) into a timestamp for sorting,
+ * newest first. Unparseable/"Pending" dates sort to the end rather than
+ * breaking the sort.
+ */
+function parseTestDate(dateStr: string): number {
+  if (!dateStr) return -Infinity;
+  const trimmed = dateStr.trim();
+  if (trimmed.toLowerCase() === "pending") return -Infinity;
+  const direct = Date.parse(trimmed);
+  if (!Number.isNaN(direct)) return direct;
+  // "Month YYYY" (e.g. "July 2026") - Date.parse needs a day to work reliably.
+  const withDay = Date.parse(`1 ${trimmed}`);
+  if (!Number.isNaN(withDay)) return withDay;
+  return -Infinity;
+}
+
+/** Newest testDate first. Entries with no parseable date (e.g. "Pending") sort last. */
+export function sortCoaEntriesByDateDesc(entries: COAEntry[]): COAEntry[] {
+  return [...entries].sort((a, b) => parseTestDate(b.testDate) - parseTestDate(a.testDate));
+}
+
+/**
  * Live COA library, editable from wp-admin -> Valkyrie CMS -> COA Files,
  * without a code change or rebuild. The array below (coaEntries) is only a
  * same-request fallback for if that fetch fails - wp-admin is the real
@@ -42,6 +65,29 @@ export async function fetchCOALibrary(): Promise<COAEntry[]> {
   } catch {
     return coaEntries;
   }
+}
+
+let cachedLibrary: Promise<COAEntry[]> | null = null;
+
+/**
+ * Same as fetchCOALibrary(), but only hits the network once per page load -
+ * callers (the /coa page and product pages' COA tab) share one in-flight
+ * request/result instead of each re-fetching the library independently.
+ */
+export function getCOALibrary(): Promise<COAEntry[]> {
+  if (!cachedLibrary) cachedLibrary = fetchCOALibrary();
+  return cachedLibrary;
+}
+
+/** Finds a COA library entry for a product slug (e.g. "glp-1-sm-10mg"). */
+export function findCOAEntryBySlug(entries: COAEntry[], slug: string): COAEntry | null {
+  return entries.find((e) => e.productSlug === slug) ?? null;
+}
+
+/** Flattens a COA entry's documents (purity + endotoxin) into a plain URL list for display. */
+export function coaEntryDocUrls(entry: COAEntry | null): string[] {
+  if (!entry) return [];
+  return [entry.coaUrl, entry.endotoxinUrl].filter((u): u is string => !!u);
 }
 
 /** Looks up a single COA by lot/batch number via the live wp-admin library. Powers /coa/:lot. */

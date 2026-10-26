@@ -3,7 +3,7 @@
  * Plugin Name: Valkyrie Frontend Router
  * Plugin URI:  https://valkyriepeptides.com
  * Description: Serves the built React/Vite storefront as this site's actual front-end. Run `npm run build`, zip the contents of dist/, upload it under "Valkyrie Frontend" in wp-admin, and flip on "SPA takeover" - toggle the whole frontend on/off without touching files by hand. Rebuilt on the same upload/toggle/router skeleton as the Aera Frontend Loader plugin.
- * Version:     2.0.0
+ * Version:     2.2.0
  * Author:      Valkyrie Research LLC
  * Text Domain: valkyrie-router
  * Requires WP: 6.0
@@ -12,7 +12,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'VROUTER_VERSION', '2.0.0' );
+define( 'VROUTER_VERSION', '2.2.0' );
 define( 'VROUTER_PLUGIN_FILE', __FILE__ );
 define( 'VROUTER_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'VROUTER_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -25,6 +25,9 @@ function vrouter_require_includes() {
 		'includes/class-spa-router.php',
 		'includes/class-auth.php',
 		'includes/class-product-tools.php',
+		'includes/class-glp-sale.php',
+		'includes/class-bogo.php',
+		'includes/class-discount-lock.php',
 		// Valkyrie Peptides' own product-tab content, wired in purely via
 		// filters exposed by class-product-tools.php - delete this line (and
 		// the file it loads) to run the router without that site-specific
@@ -45,6 +48,9 @@ function vrouter_init_plugin() {
 	VROUTER_SPA_Router::init();
 	VROUTER_Auth::init();
 	VROUTER_Product_Tools::init();
+	VROUTER_Glp_Sale::init();
+	VROUTER_Bogo::init();
+	VROUTER_Discount_Lock::init();
 }
 add_action( 'plugins_loaded', 'vrouter_init_plugin', 1 );
 

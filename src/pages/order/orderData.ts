@@ -1,8 +1,8 @@
 export type PaymentMethod = "zelle" | "venmo" | "cashapp" | "card";
 
-export const ZELLE_INFO   = { handle: "509-220-5434",       name: "Warrior Distributions LLC" };
-export const VENMO_INFO = { handle: "@warriordistributions", name: "Warrior Distributions LLC" };
-export const CASHAPP_INFO = { handle: "$warriordistributions",   name: "Warrior Distributions LLC" };
+export const ZELLE_INFO   = { handle: "208-280-3993",       name: "Valkyrie Research LLC" };
+export const VENMO_INFO = { handle: "@valkyrie-research", name: "Valkyrie Research LLC" };
+export const CASHAPP_INFO = { handle: "$ValkyrieResearch",   name: "Valkyrie Research LLC" };
 
 export const PAYMENT_LABELS: Record<PaymentMethod, string> = {
   zelle:   "Zelle",
@@ -22,6 +22,17 @@ export function getPaymentHandle(m: PaymentMethod): string {
   if (m === "card")    return "";
   return ZELLE_INFO.handle;
 }
+
+/**
+ * Zelle/Venmo/Cash App skip card-processing fees, so they're offered this
+ * much cheaper than card - applied to the product subtotal only (not tax/
+ * shipping). Shown on checkout whenever a manual method is selected, but
+ * its actual effect is zeroed (shows $0.00, still visible) while the GLP
+ * sale or BOGO promo already discounts this cart - see discountsLocked in
+ * useCart.tsx. Keep in sync with VROUTER_ALT_PAYMENT_DISCOUNT_RATE in the
+ * valkyrie-router plugin, which is what actually enforces this server-side.
+ */
+export const ALT_PAYMENT_DISCOUNT_RATE = 5; // percent
 
 export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const SHIPPING_RATE = 9.95;

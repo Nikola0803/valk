@@ -20,7 +20,7 @@ export default function ContactSidebar() {
           </div>
           <div>
             <p className="text-[10px] font-bold uppercase tracking-widest text-[#aaa] mb-1">Phone</p>
-            <a href="tel:2082439222" className="text-[#111] font-bold text-base hover:text-[#555] transition-colors cursor-pointer">(541)-709-5434</a>
+            <a href="tel:2082439222" className="text-[#111] font-bold text-base hover:text-[#555] transition-colors cursor-pointer">(208) 243-9222</a>
             <p className="text-[#aaa] text-xs mt-1">7 days a week support</p>
           </div>
         </div>
@@ -32,7 +32,7 @@ export default function ContactSidebar() {
           </div>
           <div>
             <p className="text-[10px] font-bold uppercase tracking-widest text-[#aaa] mb-1">Email</p>
-            <a href="mailto:support@warriordistributions.com" className="text-[#111] font-bold text-sm hover:text-[#555] transition-colors cursor-pointer">support@warriordistributions.com</a>
+            <a href="mailto:support@valkyriepeps.com" className="text-[#111] font-bold text-sm hover:text-[#555] transition-colors cursor-pointer">support@valkyriepeps.com</a>
             <p className="text-[#aaa] text-xs mt-1">We reply within 24 hours</p>
           </div>
         </div>

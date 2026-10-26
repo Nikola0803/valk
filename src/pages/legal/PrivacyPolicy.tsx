@@ -31,7 +31,7 @@ export default function PrivacyPolicyPage() {
               <section>
                 <h2 className="font-black text-xl uppercase tracking-tight text-[#111] mb-4">1. Introduction</h2>
                 <p className="text-[#555] text-sm leading-relaxed">
-                  Warrior Distributions ("we," "us," or "our") is committed to protecting your personal information and your right to privacy. This Privacy Policy describes how we collect, use, and share information about you when you use our website, make purchases, or interact with us in any way. By using our site, you agree to the terms of this policy.
+                  Valkyrie Peptides ("we," "us," or "our") is committed to protecting your personal information and your right to privacy. This Privacy Policy describes how we collect, use, and share information about you when you use our website, make purchases, or interact with us in any way. By using our site, you agree to the terms of this policy.
                 </p>
               </section>
 
@@ -174,8 +174,8 @@ export default function PrivacyPolicyPage() {
                   If you have any questions about this Privacy Policy or how we handle your data, please contact us:
                 </p>
                 <div className="p-6" style={{ background: "#111", color: "#fff" }}>
-                  <p className="font-bold text-sm mb-1">Warrior Distributions</p>
-                  <p className="text-white/60 text-sm">Phone: (541)-709-5434</p>
+                  <p className="font-bold text-sm mb-1">Valkyrie Peptides</p>
+                  <p className="text-white/60 text-sm">Phone: (208) 243-9222</p>
                   <p className="text-white/60 text-sm mt-1">For legal inquiries, contact us via our website contact form.</p>
                 </div>
               </section>

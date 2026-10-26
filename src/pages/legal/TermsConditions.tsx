@@ -33,7 +33,7 @@ export default function TermsConditionsPage() {
                   <i className="ri-alert-line text-yellow-400 text-base"></i>
                 </div>
                 <p className="text-white/80 text-sm leading-relaxed">
-                  <strong className="text-white">IMPORTANT:</strong> All products sold by Warrior Distributions are intended exclusively for research and laboratory use. These products are NOT intended for human consumption, injection, therapeutic use, or veterinary use. By placing an order, you confirm that you are a qualified researcher or scientist using these products solely for legitimate research purposes.
+                  <strong className="text-white">IMPORTANT:</strong> All products sold by Valkyrie Peptides are intended exclusively for research and laboratory use. These products are NOT intended for human consumption, injection, therapeutic use, or veterinary use. By placing an order, you confirm that you are a qualified researcher or scientist using these products solely for legitimate research purposes.
                 </p>
               </div>
             </div>
@@ -41,7 +41,7 @@ export default function TermsConditionsPage() {
             <section>
               <h2 className="font-black text-xl uppercase tracking-tight text-[#111] mb-4">1. Acceptance of Terms</h2>
               <p className="text-[#555] text-sm leading-relaxed">
-                By accessing or using the Warrior Distributions website ("Site"), purchasing our products, or interacting with us in any way, you agree to be bound by these Terms and Conditions ("Terms"). If you do not agree to these Terms, please do not use our Site or purchase our products. We reserve the right to update these Terms at any time without prior notice.
+                By accessing or using the Valkyrie Peptides website ("Site"), purchasing our products, or interacting with us in any way, you agree to be bound by these Terms and Conditions ("Terms"). If you do not agree to these Terms, please do not use our Site or purchase our products. We reserve the right to update these Terms at any time without prior notice.
               </p>
             </section>
 
@@ -103,7 +103,7 @@ export default function TermsConditionsPage() {
             <section>
               <h2 className="font-black text-xl uppercase tracking-tight text-[#111] mb-4">6. Intellectual Property</h2>
               <p className="text-[#555] text-sm leading-relaxed">
-                All content on this Site, including but not limited to text, graphics, logos, images, and software, is the property of Warrior Distributions and is protected by applicable intellectual property laws. You may not reproduce, distribute, or create derivative works from any content without our express written permission.
+                All content on this Site, including but not limited to text, graphics, logos, images, and software, is the property of Valkyrie Peptides and is protected by applicable intellectual property laws. You may not reproduce, distribute, or create derivative works from any content without our express written permission.
               </p>
             </section>
 
@@ -112,7 +112,7 @@ export default function TermsConditionsPage() {
             <section>
               <h2 className="font-black text-xl uppercase tracking-tight text-[#111] mb-4">7. Disclaimer of Warranties</h2>
               <p className="text-[#555] text-sm leading-relaxed">
-                Products are sold "AS IS" for research purposes only. Warrior Distributions makes no warranties, express or implied, including without limitation any implied warranties of merchantability or fitness for a particular purpose. We do not warrant that our products will produce any specific research outcomes.
+                Products are sold "AS IS" for research purposes only. Valkyrie Peptides makes no warranties, express or implied, including without limitation any implied warranties of merchantability or fitness for a particular purpose. We do not warrant that our products will produce any specific research outcomes.
               </p>
             </section>
 
@@ -121,7 +121,7 @@ export default function TermsConditionsPage() {
             <section>
               <h2 className="font-black text-xl uppercase tracking-tight text-[#111] mb-4">8. Limitation of Liability</h2>
               <p className="text-[#555] text-sm leading-relaxed">
-                To the fullest extent permitted by law, Warrior Distributions shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of our products or Site. Our total liability shall not exceed the amount paid by you for the specific product giving rise to the claim.
+                To the fullest extent permitted by law, Valkyrie Peptides shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of our products or Site. Our total liability shall not exceed the amount paid by you for the specific product giving rise to the claim.
               </p>
             </section>
 
@@ -139,8 +139,8 @@ export default function TermsConditionsPage() {
             <section>
               <h2 className="font-black text-xl uppercase tracking-tight text-[#111] mb-4">10. Contact</h2>
               <div className="p-6" style={{ background: "#111", color: "#fff" }}>
-                <p className="font-bold text-sm mb-1">Warrior Distributions</p>
-                <p className="text-white/60 text-sm">Phone: (541)-709-5434</p>
+                <p className="font-bold text-sm mb-1">Valkyrie Peptides</p>
+                <p className="text-white/60 text-sm">Phone: (208) 243-9222</p>
                 <p className="text-white/60 text-sm mt-1">Contact us through our website for legal inquiries.</p>
               </div>
             </section>

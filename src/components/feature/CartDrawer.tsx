@@ -4,7 +4,6 @@ import { useCart } from "@/hooks/useCart";
 import { useProducts } from "@/hooks/useProducts";
 import { validateCoupon } from "@/lib/woocommerce";
 import { trackViewCart } from "@/lib/analytics";
-import FreeShippingBar from "@/components/feature/FreeShippingBar";
 import CartUpsellRail from "@/components/feature/CartUpsellRail";
 
 const BAC_WATER_SLUG = "bac-water-10ml";
@@ -137,12 +136,6 @@ export default function CartDrawer() {
             <i className="ri-close-line text-xl"></i>
           </button>
         </div>
-
-        {totalItems > 0 && (
-          <div className="px-7 py-4 flex-shrink-0" style={{ borderBottom: "1px solid #e8e8e8" }}>
-            <FreeShippingBar subtotal={subtotal} />
-          </div>
-        )}
 
         {/* Items + footer share one scrollable region - on short screens (small
             laptop windows, landscape mobile) the footer content alone (coupon +
@@ -306,6 +299,9 @@ export default function CartDrawer() {
                         name: bacWaterProduct.name,
                         price: bacWaterProduct.price,
                         image: bacWaterProduct.image,
+                        category: bacWaterProduct.category,
+                        originalPrice: bacWaterProduct.originalPrice,
+                        onSale: bacWaterProduct.onSale,
                       });
                     }}
                     className="w-full py-2.5 font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 cursor-pointer transition-all"

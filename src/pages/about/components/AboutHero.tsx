@@ -8,14 +8,14 @@ export default function AboutHero() {
     >
       <img
         src="https://valkyriepeptides.com/wp-content/uploads/2026/04/41140d85582577a436501acbd4d30a63-scaled.jpg"
-        alt="Warrior Distributions Lab"
+        alt="Valkyrie Peptides Lab"
         className="absolute inset-0 w-full h-full object-cover object-center opacity-30"
       />
       <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(17,17,17,1) 0%, rgba(17,17,17,0.6) 60%, rgba(17,17,17,0.3) 100%)" }} />
 
       <div className="relative z-10 max-w-[1320px] mx-auto w-full px-4 md:px-8 lg:px-16 pb-10 md:pb-16 pt-16 md:pt-20">
         <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-white/40 mb-4">
-          Warrior Distributions
+          Valkyrie Peptides
         </p>
         <h1
           className="font-black uppercase leading-[0.88] tracking-tight mb-6"

@@ -1,9 +1,11 @@
 import { useEffect, useRef } from "react";
 import Navbar from "@/components/feature/Navbar";
 import MilitaryBanner from "@/pages/home/components/MilitaryBanner";
-import HeroSection from "@/pages/home/components/HeroSection";
+import HalloweenHeroSection from "@/pages/home/components/HalloweenHeroSection";
 import TrustBadges from "@/pages/home/components/TrustBadges";
 import GpSaleSection from "@/pages/home/components/GpSaleSection";
+import GlpSaleSection from "@/pages/home/components/GlpSaleSection";
+import BogoSaleSection from "@/pages/home/components/BogoSaleSection";
 import BestSellers from "@/pages/home/components/BestSellers";
 import FeatureCards from "@/pages/home/components/FeatureCards";
 import QualitySection from "@/pages/home/components/QualitySection";
@@ -37,9 +39,11 @@ export default function HomePage() {
 
       <div style={{ paddingTop: headerHeight }}>
         <main>
-          <HeroSection />
+          <HalloweenHeroSection />
           <TrustBadges />
           <GpSaleSection />
+          <GlpSaleSection />
+          <BogoSaleSection />
           <BestSellers />
           <FeatureCards />
           <QualitySection />
