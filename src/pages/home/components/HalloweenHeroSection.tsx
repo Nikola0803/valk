@@ -58,7 +58,7 @@ export default function HalloweenHeroSection() {
       <div
         className="absolute inset-0 z-0"
         style={{
-          backgroundImage: "url(/halloween-hero-monsters.jpg)",
+          backgroundImage: "url(https://valkyriepeps.com/wp-content/uploads/2026/10/image-1793054942086.jpg)",
           backgroundSize: "cover",
           backgroundPosition: "center 25%",
           filter: "contrast(1.08) saturate(0.9) brightness(0.9)",
